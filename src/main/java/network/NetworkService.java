@@ -1,4 +1,4 @@
-package services;
+package network;
 
 import javax.security.auth.login.FailedLoginException;
 

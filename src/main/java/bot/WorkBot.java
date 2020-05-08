@@ -26,11 +26,12 @@ public class WorkBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String request = update.getMessage().getText();
             System.out.println(request);
-            Response response = responseService.getResponse(request);
+            long chatId = update.getMessage().getChatId();
 
+            Response response = responseService.getResponse(update);
 
             SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
-                    .setChatId(update.getMessage().getChatId())
+                    .setChatId(chatId)
                     .setText(response.getMessage());
 
             try {
@@ -48,7 +49,7 @@ public class WorkBot extends TelegramLongPollingBot {
 //    }
 
     public String getBotUsername() {
-        return "KVBot";
+        return "JobSearcher";
     }
 
     public String getBotToken() {

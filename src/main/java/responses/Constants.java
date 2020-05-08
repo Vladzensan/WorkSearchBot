@@ -12,6 +12,6 @@ public class Constants {
     public static final String UNSUPPORTED_CMD_MSG = "Sorry, but i'm unable to process such command :( \n" +
             "But It'll be added soon ;)";
 
-    public static final String LOGIN_SUCCESS_MSG = "Yo've successfully logged in!  Now You may start using our services.";
+    public static final String LOGIN_SUCCESS_MSG = "You've successfully logged in!  Now You may start using our services.";
     public static final String LOGIN_FAILURE_MSG = "Login failed. Check your login/password and try again";
 }

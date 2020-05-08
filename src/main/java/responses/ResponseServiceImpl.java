@@ -1,34 +1,38 @@
 package responses;
 
-import services.LoginService;
-import services.LoginServiceImpl;
+import authorization.LoginService;
+import authorization.LoginServiceImpl;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Arrays;
 
 public class ResponseServiceImpl implements ResponseService {
 
-    private LoginService loginService;
-
-    public ResponseServiceImpl() {
-        loginService = new LoginServiceImpl();
-    }
+    private LoginService loginService = LoginServiceImpl.getInstance();
 
 
-    public Response getResponse(String request) {
-        Command command = defineCommand(request);
+    public Response getResponse(Update update) {
+        String request = update.getMessage().getText();
+        String[] words = request.split("\\s+");
+
+        Command command = defineCommand(words[0]);
         Response response;
         switch (command) {
             case HELP:
                 response = new Response();
                 response.setMessage(Constants.HELP_MSG);
+                break;
             case START:
                 response = new Response();
                 response.setMessage(Constants.WELCOME_MSG);
+                break;
             case LOGIN:
-                response = getLoginResponse(request);
+                response = getLoginResponse(request, update.getMessage().getChatId());
+                break;
             default:
                 response = new Response();
                 response.setMessage(Constants.UNSUPPORTED_CMD_MSG);
+                break;
         }
 
         return response;
@@ -41,18 +45,9 @@ public class ResponseServiceImpl implements ResponseService {
                 .orElse(Command.UNDEFINED);
     }
 
-    private Response getLoginResponse(String request) {
-        request = request.trim();
-        int lastSpaceIndex = request.lastIndexOf(" ");
-
-        String password = request.trim().substring(lastSpaceIndex + 1);
-
-        request = request.substring(0, lastSpaceIndex + 1).trim();
-        lastSpaceIndex = request.lastIndexOf(" ");
-
-        String login = request.substring(lastSpaceIndex + 1);
-
-        boolean isLoggedIn = loginService.login(login, password);
+    private Response getLoginResponse(String request, long chatId) {
+        String[] tokens = request.split("\\s+");
+        boolean isLoggedIn = loginService.login(tokens[1], tokens[2], chatId);
 
         Response response = new Response();
         if (isLoggedIn) {
