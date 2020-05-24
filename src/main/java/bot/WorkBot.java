@@ -23,16 +23,20 @@ public class WorkBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
+
         if (update.hasMessage() && update.getMessage().hasText()) {
             String request = update.getMessage().getText();
             System.out.println(request);
             long chatId = update.getMessage().getChatId();
 
+
             Response response = responseService.getResponse(update);
+
 
             SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
                     .setChatId(chatId)
                     .setText(response.getMessage());
+
 
             try {
                 execute(message); // Call method to send the message
