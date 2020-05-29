@@ -2,9 +2,12 @@ package responses;
 
 import authorization.LoginService;
 import authorization.LoginServiceImpl;
+import locale.LocaleServiceImpl;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public class CommandTaskFactory {
 
@@ -45,10 +48,11 @@ public class CommandTaskFactory {
         boolean isLoggedIn = loginService.login(tokens[1], tokens[2], chatId);
 
         Response response = new Response();
+        ResourceBundle resourceBundle = LocaleServiceImpl.getInstance().getLocaleBundle(new Locale("en"));
         if (isLoggedIn) {
-            response.setMessage(Constants.LOGIN_SUCCESS_MSG);
+            response.setMessage(resourceBundle.getString("login_success_msg"));
         } else {
-            response.setMessage(Constants.LOGIN_FAILURE_MSG);
+            response.setMessage(resourceBundle.getString("login_failure_msg"));
         }
 
         return response;
