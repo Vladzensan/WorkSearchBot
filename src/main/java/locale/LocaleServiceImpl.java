@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class LocaleServiceImpl implements LocaleService {
-    private static final String BUNDLE_BASENAME = "MessageBundle";
+    private static final String BUNDLE_BASENAME = "locale.MessageBundle";
 
     private Map<Locale, ResourceBundle> localeMap = new HashMap<>();
 
