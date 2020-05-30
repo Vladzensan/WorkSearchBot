@@ -14,6 +14,10 @@ public enum Command {
     PROFILE("/profile", "profile_item"),
     SEARCH("/search", "search_item"),
     FAVORITES("/favorites", "favorites_item"),
+    CATALOGUES("/catalogues", "catalogue_item"),
+    SALARY("/salary", "salary_item"),
+    AGE("/age", "age_item"),
+    GENDER("/gender", "gender_item"),
     LANGUAGE("/lang", "language_item"),
     UNDEFINED("undefined", "undefined_item");
 
