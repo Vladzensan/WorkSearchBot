@@ -5,9 +5,7 @@ import authorization.LoginServiceImpl;
 import locale.LocaleService;
 import locale.LocaleServiceImpl;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import user.ArrayListUserDao;
 import user.User;
-import user.UserDao;
 
 import java.util.*;
 
@@ -15,7 +13,6 @@ public class CommandTaskFactory {
 
     private static Map<Command, CommandTask> instance;
     private static LocaleService localeService = LocaleServiceImpl.getInstance();
-    private static UserDao userDao = ArrayListUserDao.getInstance();
 
     private CommandTaskFactory() {
     }
@@ -39,7 +36,7 @@ public class CommandTaskFactory {
 
     }
 
-    private static Response helpHandler(String query, long chatId) {
+    private static Response helpHandler(String query, User user) {
         Response response = new Response();
 
         response.setMessage("Help info");
@@ -48,9 +45,9 @@ public class CommandTaskFactory {
     }
 
 
-    private static Response loginHandler(String query, long chatId) {
+    private static Response loginHandler(String query, User user) {
         Response response = new Response();
-        ResourceBundle constants = localeService.getMessageBundle(userDao.getUserById(chatId).getCurrentLocale());
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
         LoginService loginService = LoginServiceImpl.getInstance();
 
@@ -60,7 +57,7 @@ public class CommandTaskFactory {
             return response;
         }
 
-        boolean isLoggedIn = loginService.login(tokens[1], tokens[2], chatId);
+        boolean isLoggedIn = loginService.login(tokens[1], tokens[2], user.getChatId());
         if (isLoggedIn) {
             response.setMessage(constants.getString("login_success"));
         } else {
@@ -70,10 +67,9 @@ public class CommandTaskFactory {
         return response;
     }
 
-    private static Response handleMenu(String query, long chatId) {
+    private static Response handleMenu(String query, User user) {
         final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE, Command.AUTH,
                 Command.SEARCH, Command.FAVORITES, Command.LANGUAGE));
-        User user = userDao.getUserById(chatId);
         Response response = new Response();
         response.setMessage("WorkSearch bot menu:");
 
@@ -81,9 +77,8 @@ public class CommandTaskFactory {
         return response;
     }
 
-    private static Response handleAuth(String query, long chatId) {
+    private static Response handleAuth(String query, User user) {
         final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.LOGIN, Command.LOGOUT));
-        User user = userDao.getUserById(chatId);
 
         Response response = new Response();
         response.setMessage(Command.AUTH.getCaption(user.getCurrentLocale()));
@@ -93,8 +88,7 @@ public class CommandTaskFactory {
     }
 
 
-    private static Response handleLanguage(String query, long chatId) {
-        User user = userDao.getUserById(chatId);
+    private static Response handleLanguage(String query, User user) {
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
         Response response = new Response();
 
@@ -108,7 +102,7 @@ public class CommandTaskFactory {
         String language = tokens[1].toLowerCase();
         if (language.equals("en") || language.equals("ru")) {
             user.setCurrentLocale(new Locale(language));
-            constants = localeService.getMessageBundle(userDao.getUserById(chatId).getCurrentLocale());
+            constants = localeService.getMessageBundle(user.getCurrentLocale());
 
             response.setMessage(constants.getString("language_success"));
 

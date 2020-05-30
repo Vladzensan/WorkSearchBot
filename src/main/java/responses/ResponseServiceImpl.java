@@ -29,7 +29,7 @@ public class ResponseServiceImpl implements ResponseService {
 
         Command command = defineCommand(words[0]);
         System.out.println(command.getCommand());
-        return CommandTaskFactory.getTask(command).execute(request, chatId);
+        return CommandTaskFactory.getTask(command).execute(request, userDao.getUserById(chatId));
     }
 
     private void validatePresentUser(long chatId) {
