@@ -21,11 +21,11 @@ public class LoginServiceImpl implements LoginService {
     }
 
     public boolean login(String login, String password, long chatId) {
-        try{
+        try {
             String accessToken = networkService.getAccessToken(login, password);
             chatTokens.put(chatId, accessToken);
             return true;
-        } catch (FailedLoginException e){
+        } catch (FailedLoginException e) {
             return false;
         }
     }

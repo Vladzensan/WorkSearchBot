@@ -93,7 +93,8 @@ public class NetworkServiceImpl implements NetworkService {
                 System.out.println(con.getResponseMessage());
                 String jsonData = readData(con);
                 ObjectMapper mapper = new ObjectMapper();
-                catalogues = mapper.readValue(jsonData, new TypeReference<List<Catalogue>>(){});
+                catalogues = mapper.readValue(jsonData, new TypeReference<List<Catalogue>>() {
+                });
                 return catalogues;
             } else {
                 System.out.println("Error occurred");
@@ -128,14 +129,14 @@ public class NetworkServiceImpl implements NetworkService {
                 String jsonData = readData(con);
                 ObjectMapper mapper = new ObjectMapper();
                 VacanciesInfo vacanciesInfo = mapper.readerFor(VacanciesInfo.class).readValue(jsonData);
-                for (Object vacancyData: vacanciesInfo.getObjects()) {
-                    LinkedHashMap<String,Object> rawVacancy = (LinkedHashMap<String, Object>)vacancyData;
+                for (Object vacancyData : vacanciesInfo.getObjects()) {
+                    LinkedHashMap<String, Object> rawVacancy = (LinkedHashMap<String, Object>) vacancyData;
                     Vacancy vacancy = new Vacancy();
-                    vacancy.setId((int)rawVacancy.get("id"));
-                    vacancy.setProfession((String)rawVacancy.get("profession"));
-                    vacancy.setPublicationDate((int)rawVacancy.get("date_published"));
-                    LinkedHashMap<String, Object> townInfo = (LinkedHashMap<String, Object>)rawVacancy.get("town");
-                    vacancy.setTown((String)townInfo.get("title"));
+                    vacancy.setId((int) rawVacancy.get("id"));
+                    vacancy.setProfession((String) rawVacancy.get("profession"));
+                    vacancy.setPublicationDate((int) rawVacancy.get("date_published"));
+                    LinkedHashMap<String, Object> townInfo = (LinkedHashMap<String, Object>) rawVacancy.get("town");
+                    vacancy.setTown((String) townInfo.get("title"));
                     vacancies.add(vacancy);
                 }
                 System.out.println(vacancies);

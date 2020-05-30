@@ -2,7 +2,6 @@ package services;
 
 import network.NetworkService;
 import network.NetworkServiceImpl;
-import vacancies.Catalogue;
 import vacancies.Vacancy;
 
 import java.util.ArrayList;

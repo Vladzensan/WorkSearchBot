@@ -11,8 +11,8 @@ import responses.ResponseServiceImpl;
 import java.util.logging.Logger;
 
 public class WorkBot extends TelegramLongPollingBot {
-    private ResponseService responseService;
     private static Logger logger = Logger.getLogger(WorkBot.class.getName());
+    private ResponseService responseService;
 
 
     public WorkBot() {

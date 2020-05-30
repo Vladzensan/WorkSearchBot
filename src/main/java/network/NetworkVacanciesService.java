@@ -8,5 +8,6 @@ import java.util.Map;
 
 public interface NetworkVacanciesService {
     List<Catalogue> getCataloguesList();
+
     List<Vacancy> getVacanciesList(Map<String, String> searchParameters);
 }
