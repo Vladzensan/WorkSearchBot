@@ -24,19 +24,18 @@ public class WorkBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
 
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String request = update.getMessage().getText();
-            System.out.println(request);
-            long chatId = update.getMessage().getChatId();
-
+        if (update.hasCallbackQuery() || update.hasMessage() && update.getMessage().hasText()) {
 
             Response response = responseService.getResponse(update);
 
-
+            long chatId = getChatId(update);
             SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
                     .setChatId(chatId)
                     .setText(response.getMessage());
 
+            if (response.hasKeyboardMarkup()) {
+                message.setReplyMarkup(response.getMarkup());
+            }
 
             try {
                 execute(message); // Call method to send the message
@@ -47,10 +46,13 @@ public class WorkBot extends TelegramLongPollingBot {
         }
     }
 
-//    private String getResponse(){
-//        Scanner scanner = new Scanner(System.in);
-//        return scanner.nextLine();
-//    }
+    private long getChatId(Update update) {
+        if (update.hasMessage()) {
+            return update.getMessage().getChatId();
+        } else {
+            return update.getCallbackQuery().getMessage().getChatId();
+        }
+    }
 
     public String getBotUsername() {
         return "JobSearcher";

@@ -1,32 +1,40 @@
 package responses;
 
+import locale.LocaleService;
+import locale.LocaleServiceImpl;
+
+import java.util.Locale;
+
 public enum Command {
-    START("/start", "Start"),
-    HELP("/help", "Help"),
-    AUTH("/auth", "Authorization"),
-    LOGIN("/login", "Login"),
-    LOGOUT("/logout", "Logout"),
-    PROFILE("/profile", "Profile"),
-    SEARCH("/search", "Search vacancies"),
-    FAVORITES("/favorites", "Favorite vacancies"),
+    MENU("/menu", "menu_item"),
+    HELP("/help", "help_item"),
+    AUTH("/auth", "auth_item"),
+    LOGIN("/login", "login_item"),
+    LOGOUT("/logout", "logout_item"),
+    PROFILE("/profile", "profile_item"),
+    SEARCH("/search", "search_item"),
+    FAVORITES("/favorites", "favorites_item"),
+    LANGUAGE("/lang", "language_item"),
+    UNDEFINED("undefined", "undefined_item");
 
-    UNDEFINED("undefined", "Undefined command");
 
+    private static LocaleService localeService = LocaleServiceImpl.getInstance();
     private String command;
-    private String caption;
+    private String name;
 
 
-    Command(String command, String caption) {
+    Command(String command, String name) {
         this.command = command;
-        this.caption = caption;
+        this.name = name;
     }
+
 
     public String getCommand() {
         return command;
     }
 
-    public String getCaption() {
-        return caption;
+    public String getCaption(Locale locale) {
+        return localeService.getMenuItemBundle(locale).getString(this.name);
     }
 
 }
