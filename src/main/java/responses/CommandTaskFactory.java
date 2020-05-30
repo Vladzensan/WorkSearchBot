@@ -37,7 +37,6 @@ public class CommandTaskFactory {
         return response;
     }
 
-
     private static Response loginHandler(String query, long chatId) {
         LoginService loginService = LoginServiceImpl.getInstance();
 
@@ -53,4 +52,5 @@ public class CommandTaskFactory {
 
         return response;
     }
+
 }

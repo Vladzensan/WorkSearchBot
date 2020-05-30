@@ -8,8 +8,11 @@ public enum Command {
     LOGOUT("/logout", "Logout"),
     PROFILE("/profile", "Profile"),
     SEARCH("/search", "Search vacancies"),
+    CATALOGUES("/catalogues", "Catalogue"),
+    SALARY("/salary", "Salary"),
+    AGE("/age", "Age"),
+    GENDER("/gender", "Gender"),
     FAVORITES("/favorites", "Favorite vacancies"),
-
     UNDEFINED("undefined", "Undefined command");
 
     private String command;
