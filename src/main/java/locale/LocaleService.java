@@ -5,5 +5,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public interface LocaleService {
-    ResourceBundle getLocaleBundle(Locale locale);
+    ResourceBundle getMessageBundle(Locale locale);
+
+    ResourceBundle getMenuItemBundle(Locale locale);
 }
