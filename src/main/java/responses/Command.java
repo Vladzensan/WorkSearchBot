@@ -13,13 +13,15 @@ public enum Command {
     LOGOUT("/logout", "logout_item"),
     PROFILE("/profile", "profile_item"),
     SEARCH("/search", "search_item"),
+    FIND("/find", "find_item"),
     FAVORITES("/favorites", "favorites_item"),
-    CATALOGUES("/catalogues", "catalogue_item"),
+    CATALOGUES("/catalogues", "catalogues_item"),
     SALARY("/salary", "salary_item"),
     AGE("/age", "age_item"),
-    GENDER("/gender", "gender_item"),
+    EXPERIENCE("/experience", "experience_item"),
+    PLACEOFWORK("/placeofwork", "place_of_work_item"),
     LANGUAGE("/lang", "language_item"),
-    UNDEFINED("undefined", "undefined_item");
+    OTHER("undefined", "undefined_item");
 
 
     private static LocaleService localeService = LocaleServiceImpl.getInstance();

@@ -12,6 +12,7 @@ public class Catalogue {
     private String titleTrimmed;
     private int key;
     private Object[] positions;
+
     @JsonCreator
     public Catalogue(@JsonProperty("title_rus") String titleRus, @JsonProperty("url_rus") String urlRus,
                      @JsonProperty("title") String title, @JsonProperty("title_trimmed") String titleTrimmed,

@@ -1,5 +1,6 @@
 package network;
 
+import filters.Filter;
 import vacancies.Catalogue;
 import vacancies.Vacancy;
 
@@ -9,5 +10,5 @@ import java.util.Map;
 public interface NetworkVacanciesService {
     List<Catalogue> getCataloguesList();
 
-    List<Vacancy> getVacanciesList(Map<String, String> searchParameters);
+    List<Vacancy> getVacanciesList(Map<Filter, String> searchParameters);
 }

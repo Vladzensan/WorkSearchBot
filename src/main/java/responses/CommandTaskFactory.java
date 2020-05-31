@@ -2,17 +2,26 @@ package responses;
 
 import authorization.LoginService;
 import authorization.LoginServiceImpl;
+import filters.Filter;
+import filters.FiltersDao;
+import filters.UserFiltersDao;
 import locale.LocaleService;
 import locale.LocaleServiceImpl;
+import network.NetworkService;
+import network.NetworkServiceImpl;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import user.User;
+import vacancies.Catalogue;
+import vacancies.Vacancy;
 
 import java.util.*;
 
 public class CommandTaskFactory {
 
+    private static FiltersDao filtersDao = UserFiltersDao.getInstance();
     private static Map<Command, CommandTask> instance;
     private static LocaleService localeService = LocaleServiceImpl.getInstance();
+    private static Response response;
 
     private CommandTaskFactory() {
     }
@@ -33,11 +42,164 @@ public class CommandTaskFactory {
         instance.put(Command.MENU, CommandTaskFactory::handleMenu);
         instance.put(Command.AUTH, CommandTaskFactory::handleAuth);
         instance.put(Command.LANGUAGE, CommandTaskFactory::handleLanguage);
+        instance.put(Command.SEARCH, CommandTaskFactory::handleSearch);
+        instance.put(Command.CATALOGUES, CommandTaskFactory::handleCatalogues);
+        instance.put(Command.EXPERIENCE, CommandTaskFactory::handleExperience);
+        instance.put(Command.AGE, CommandTaskFactory::handleAge);
+        instance.put(Command.SALARY, CommandTaskFactory::handleSalary);
+        instance.put(Command.PLACEOFWORK, CommandTaskFactory::handlePlaceOfWork);
+        instance.put(Command.OTHER, CommandTaskFactory::handleOther);
+        instance.put(Command.FIND, CommandTaskFactory::handleFind);
+    }
 
+    private static Response handleFind(String s, User user){
+        NetworkService networkService = new NetworkServiceImpl();
+
+        List<Vacancy> vacancies = networkService.getVacanciesList(filtersDao.getFilters(user.getChatId()));
+
+        response = new Response();
+
+        StringBuilder vacanciesString = new StringBuilder();
+
+        for (Vacancy vacancy : vacancies) {
+            vacanciesString.append(vacancy.getId());
+            vacanciesString.append(" ");
+            vacanciesString.append(vacancy.getProfession() + "\n");
+            vacanciesString.append(vacancy.getPublicationDate() + "\n");
+            vacanciesString.append(vacancy.getTown() + "\n\n");
+        }
+
+        response.setMessage(vacanciesString.toString());
+
+        return response;
+    }
+
+    private static Response handleOther(String s, User user) {
+        final List<Command> filterCommands = new ArrayList<>(Arrays.asList(Command.PLACEOFWORK, Command.SALARY, Command.EXPERIENCE, Command.CATALOGUES, Command.FIND));
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+        Response response = new Response();
+
+        if (!filterCommands.contains(user.getState())) {
+            response.setMessage(constants.getString("unsupported_cmd"));
+        } else {
+            response = setFilter(s, user);
+        }
+
+        return response;
+    }
+
+    private static Response setFilter(String s, User user) {
+        final List<Command> filterCommands = new ArrayList<>(Arrays.asList(Command.CATALOGUES, Command.EXPERIENCE,
+                Command.SALARY, Command.AGE, Command.PLACEOFWORK, Command.FIND));
+
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+        Map<Command, Filter> commandsToFilters = new HashMap<>();
+        commandsToFilters.put(Command.CATALOGUES, Filter.CATALOGUES);
+        commandsToFilters.put(Command.PLACEOFWORK, Filter.PLACE_OF_WORK);
+        commandsToFilters.put(Command.AGE, Filter.AGE);
+        commandsToFilters.put(Command.EXPERIENCE, Filter.EXPERIENCE);
+        //commandsToFilters.put(Command.SALARY, Filter.SALARY_FROM); TODO: change salary structure
+
+        response = new Response();
+
+        filtersDao.addFilter(user.getChatId(), commandsToFilters.get(user.getState()), s);
+
+        response.setMessage(constants.getString("filter_header"));
+
+        response.getMarkup().setKeyboard(mapButtonsByTwo(filterCommands, user.getCurrentLocale()));
+
+        user.setState(Command.SEARCH);
+
+        return response;
+    }
+
+    private static Response handleExperience(String query, User user) {
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        response = new Response();
+
+        response.setMessage(constants.getString("filter_experience_helper"));
+
+        return response;
+    }
+
+    private static Response handleAge(String query, User user) {
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        response = new Response();
+
+        response.setMessage(constants.getString("filter_age_helper"));
+
+        return response;
+    }
+
+    private static Response handleSalary(String query, User user) {
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        response = new Response();
+
+        response.setMessage(constants.getString("filter_salary_helper"));
+
+        return response;
+    }
+
+    private static Response handlePlaceOfWork(String query, User user) {
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        response = new Response();
+
+        response.setMessage(constants.getString("filter_place_of_work_helper"));
+
+        return response;
+    }
+
+    private static Response handleSearch(String query, User user) {
+        final List<Command> filterCommands = new ArrayList<>(Arrays.asList(Command.CATALOGUES, Command.EXPERIENCE,
+                Command.SALARY, Command.AGE, Command.PLACEOFWORK, Command.FIND));
+
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        user.setState(Command.SEARCH);
+
+        response = new Response();
+
+        response.setMessage(constants.getString("filter_header"));
+
+        response.getMarkup().setKeyboard(mapButtonsByTwo(filterCommands, user.getCurrentLocale()));
+
+        filtersDao.clearFilters(user.getChatId());//clear filters to start new search history
+
+        return response;
+    }
+
+    private static Response handleCatalogues(String query, User user) {
+        NetworkService networkService = new NetworkServiceImpl();
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        response = new Response();
+
+        List<Catalogue> catalogues = networkService.getCataloguesList();
+
+        StringBuilder messageCatalogues = new StringBuilder();
+
+        for (Catalogue catalogue : catalogues) {
+            messageCatalogues.append(catalogue.getKey());
+            messageCatalogues.append(" ");
+            messageCatalogues.append(catalogue.getTitle());
+            messageCatalogues.append("\n");
+        }
+
+        messageCatalogues.append("\n" + constants.getString("filter_catalogues_helper"));
+
+        response.setMessage(messageCatalogues.toString());
+
+        user.setState(Command.CATALOGUES);
+
+        return response;
     }
 
     private static Response helpHandler(String query, User user) {
-        Response response = new Response();
+        response = new Response();
 
         response.setMessage("Help info");
 
@@ -46,7 +208,7 @@ public class CommandTaskFactory {
 
 
     private static Response loginHandler(String query, User user) {
-        Response response = new Response();
+        response = new Response();
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
         LoginService loginService = LoginServiceImpl.getInstance();
@@ -70,7 +232,7 @@ public class CommandTaskFactory {
     private static Response handleMenu(String query, User user) {
         final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE, Command.AUTH,
                 Command.SEARCH, Command.FAVORITES, Command.LANGUAGE));
-        Response response = new Response();
+        response = new Response();
         response.setMessage("WorkSearch bot menu:");
 
         response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommands, user.getCurrentLocale()));
@@ -80,7 +242,7 @@ public class CommandTaskFactory {
     private static Response handleAuth(String query, User user) {
         final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.LOGIN, Command.LOGOUT));
 
-        Response response = new Response();
+        response = new Response();
         response.setMessage(Command.AUTH.getCaption(user.getCurrentLocale()));
         response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommands, user.getCurrentLocale()));
 
@@ -90,7 +252,7 @@ public class CommandTaskFactory {
 
     private static Response handleLanguage(String query, User user) {
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
-        Response response = new Response();
+        response = new Response();
 
         String[] tokens = query.split("\\s+");
         if (tokens.length == 1) {

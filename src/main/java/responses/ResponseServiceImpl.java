@@ -29,7 +29,9 @@ public class ResponseServiceImpl implements ResponseService {
 
         Command command = defineCommand(words[0]);
         System.out.println(command.getCommand());
+
         return CommandTaskFactory.getTask(command).execute(request, userDao.getUserById(chatId));
+
     }
 
     private void validatePresentUser(long chatId) {
@@ -42,7 +44,7 @@ public class ResponseServiceImpl implements ResponseService {
         return Arrays.stream(Command.values())
                 .filter(command -> command.getCommand().equals(request.trim().toLowerCase()))
                 .findAny()
-                .orElse(Command.UNDEFINED);
+                .orElse(Command.OTHER);
     }
 
 

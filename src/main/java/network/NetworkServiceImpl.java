@@ -3,6 +3,7 @@ package network;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import filters.Filter;
 import vacancies.Catalogue;
 import vacancies.VacanciesInfo;
 import vacancies.Vacancy;
@@ -107,13 +108,13 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
-    public List<Vacancy> getVacanciesList(Map<String, String> searchParameters) {
+    public List<Vacancy> getVacanciesList(Map<Filter, String> searchParameters) {
         URL url;
         List<Vacancy> vacancies = new ArrayList<>();
         try {
             StringBuilder path = new StringBuilder(VACANCIES_PATH);
-            for (String parameter : searchParameters.keySet()) {
-                path.append(parameter);
+            for (Filter parameter : searchParameters.keySet()) {
+                path.append(parameter.getName());
                 path.append("=");
                 path.append(searchParameters.get(parameter));
                 path.append("&");
