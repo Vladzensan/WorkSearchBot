@@ -16,6 +16,7 @@ import user.UserInfo;
 import vacancies.Catalogue;
 import vacancies.Vacancy;
 
+import javax.ws.rs.NotAuthorizedException;
 import java.util.*;
 
 public class CommandTaskFactory {
@@ -62,9 +63,16 @@ public class CommandTaskFactory {
     }
 
     private static Response handleFavorites(String s, User user) {
-        List<Vacancy> favoriteVacancies = networkService.getFavoriteVacancies(user.getChatId());
-        System.out.println(favoriteVacancies.size());
-        return getVacanciesResponse(favoriteVacancies);
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+        try {
+            List<Vacancy> favoriteVacancies = networkService.getFavoriteVacancies(user.getChatId());
+            return getVacanciesResponse(favoriteVacancies);
+        } catch (NotAuthorizedException e) {
+            response = new Response();
+            response.setMessage(constants.getString("login_require_msg"));
+            return response;
+        }
+
     }
 
     private static Response getVacanciesResponse(List<Vacancy> favoriteVacancies) {
@@ -75,7 +83,7 @@ public class CommandTaskFactory {
             vacanciesString.append(vacancy.getId());
             vacanciesString.append(" ");
             vacanciesString.append(vacancy.getProfession()).append("\n");
-            vacanciesString.append(new Date(vacancy.getPublicationDate()*1000L)).append("\n");
+            vacanciesString.append(new Date(vacancy.getPublicationDate() * 1000L)).append("\n");
             vacanciesString.append(vacancy.getTown()).append("\n\n");
         }
 
@@ -260,9 +268,16 @@ public class CommandTaskFactory {
     }
 
     private static Response handleProfileInfo(String s, User user) {
-        NetworkUserService network = new NetworkServiceImpl();
-        UserInfo userInfo = network.loadUser(user.getChatId());
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+        NetworkUserService network = new NetworkServiceImpl();
+        UserInfo userInfo;
+        try {
+            userInfo = network.loadUser(user.getChatId());
+        } catch (NotAuthorizedException e) {
+            response = new Response();
+            response.setMessage(constants.getString("login_require_msg"));
+            return response;
+        }
 
         Response response = new Response();
 
