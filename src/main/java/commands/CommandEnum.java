@@ -1,11 +1,11 @@
-package responses;
+package commands;
 
 import locale.LocaleService;
 import locale.LocaleServiceImpl;
 
 import java.util.Locale;
 
-public enum Command {
+public enum CommandEnum {
     MENU("/menu", "menu_item"),
     HELP("/help", "help_item"),
     AUTH("/auth", "auth_item"),
@@ -19,11 +19,14 @@ public enum Command {
     FIND("/find", "find_item"),
     FAVORITES("/favorites", "favorites_item"),
     CATALOGUES("/catalogues", "catalogues_item"),
-    SALARY("/salary", "salary_item"),
+    SALARYFROM("/salaryfrom", "salary_from_item"),
+    SALARYTO("salaryto", "salary_to_item"),
     AGE("/age", "age_item"),
     EXPERIENCE("/experience", "experience_item"),
     PLACEOFWORK("/placeofwork", "place_of_work_item"),
     LANGUAGE("/lang", "language_item"),
+    PREVIOUSPAGE("/previouspage", "previous_page_item"),
+    NEXTPAGE("/nextpage", "next_page_item"),
     OTHER("undefined", "undefined_item");
 
 
@@ -32,7 +35,7 @@ public enum Command {
     private String name;
 
 
-    Command(String command, String name) {
+    CommandEnum(String command, String name) {
         this.command = command;
         this.name = name;
     }
