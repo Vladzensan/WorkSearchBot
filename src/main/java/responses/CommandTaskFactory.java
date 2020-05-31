@@ -23,6 +23,7 @@ public class CommandTaskFactory {
     private static FiltersDao filtersDao = UserFiltersDao.getInstance();
     private static Map<Command, CommandTask> instance;
     private static LocaleService localeService = LocaleServiceImpl.getInstance();
+    private static NetworkService networkService = new NetworkServiceImpl();
     private static Response response;
 
     private CommandTaskFactory() {
@@ -56,29 +57,38 @@ public class CommandTaskFactory {
         instance.put(Command.PROFILE_INFO, CommandTaskFactory::handleProfileInfo);
         instance.put(Command.RESUMES, CommandTaskFactory::handleResumes);
         instance.put(Command.CREATE_RESUME, CommandTaskFactory::handleCreateResume);
+        instance.put(Command.FAVORITES, CommandTaskFactory::handleFavorites);
 
     }
 
-    private static Response handleFind(String s, User user) {
-        NetworkService networkService = new NetworkServiceImpl();
+    private static Response handleFavorites(String s, User user) {
+        List<Vacancy> favoriteVacancies = networkService.getFavoriteVacancies(user.getChatId());
+        System.out.println(favoriteVacancies.size());
+        return getVacanciesResponse(favoriteVacancies);
+    }
 
-        List<Vacancy> vacancies = networkService.getVacanciesList(filtersDao.getFilters(user.getChatId()));
-
+    private static Response getVacanciesResponse(List<Vacancy> favoriteVacancies) {
         response = new Response();
 
         StringBuilder vacanciesString = new StringBuilder();
-
-        for (Vacancy vacancy : vacancies) {
+        for (Vacancy vacancy : favoriteVacancies) {
             vacanciesString.append(vacancy.getId());
             vacanciesString.append(" ");
-            vacanciesString.append(vacancy.getProfession() + "\n");
-            vacanciesString.append(vacancy.getPublicationDate() + "\n");
-            vacanciesString.append(vacancy.getTown() + "\n\n");
+            vacanciesString.append(vacancy.getProfession()).append("\n");
+            vacanciesString.append(new Date(vacancy.getPublicationDate()*1000L)).append("\n");
+            vacanciesString.append(vacancy.getTown()).append("\n\n");
         }
 
         response.setMessage(vacanciesString.toString());
 
         return response;
+    }
+
+    private static Response handleFind(String s, User user) {
+
+        List<Vacancy> vacancies = networkService.getVacanciesList(filtersDao.getFilters(user.getChatId()));
+
+        return getVacanciesResponse(vacancies);
     }
 
     private static Response handleOther(String s, User user) {
@@ -274,7 +284,6 @@ public class CommandTaskFactory {
         response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommands, locale));
         return response;
     }
-
 
     private static Response handleMenu(String query, User user) {
         final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE, Command.AUTH,

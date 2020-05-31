@@ -13,9 +13,11 @@ import vacancies.VacanciesInfo;
 import vacancies.Vacancy;
 
 import javax.security.auth.login.FailedLoginException;
+import javax.ws.rs.NotAuthorizedException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -29,9 +31,9 @@ public class NetworkServiceImpl implements NetworkService {
     private final String CATALOGUES_PATH = "https://api.superjob.ru/2.0/catalogues";
     private final String VACANCIES_PATH = "https://api.superjob.ru/2.0/vacancies/?";
     private final String CURRENT_USER_PATH = "https://api.superjob.ru/2.0/user/current";
+    private final String FAVORITES_PATH = "https://api.superjob.ru/2.0/favorites/";
 
     private EntitiesMapper entityMapper = new JsonEntitiesMapper();
-    private AuthService authService = AuthServiceImpl.getInstance();
 
     public AuthToken getAccessToken(String login, String password) throws FailedLoginException {
         URL url;
@@ -63,22 +65,6 @@ public class NetworkServiceImpl implements NetworkService {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private String readData(HttpURLConnection connection) {
-        StringBuilder result = new StringBuilder();
-
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                result.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return Objects.requireNonNull(result).toString();
     }
 
     @Override
@@ -135,6 +121,80 @@ public class NetworkServiceImpl implements NetworkService {
         return null;
     }
 
+    @Override
+    public List<Vacancy> getFavoriteVacancies(long chatId) {
+        String token = tryGetAuthToken(chatId);
+
+        List<Vacancy> vacancies;
+        try {
+            URL url = new URL(FAVORITES_PATH);
+            HttpURLConnection connection = requestGet(FAVORITES_PATH, token);
+
+            if (connection != null && connection.getResponseCode() == 200) {
+                String json = readData(connection);
+
+                VacanciesInfo vacanciesInfo = entityMapper.mapVacanciesInfo(json);
+                vacancies = new JsonEntitiesMapper().mapVacancies(vacanciesInfo.getObjects());
+
+                return vacancies;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean addFavoriteVacancy(long chatId, long vacancyId) {
+        String token = tryGetAuthToken(chatId);
+
+        URL url;
+        try {
+            url = new URL(FAVORITES_PATH);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+
+            con.setRequestProperty("X-Api-App-Id", APP_KEY);
+            con.setRequestProperty("Authorization", token);
+
+            writeData(con.getOutputStream(), "ids[0]=" + vacancyId);
+
+            if (con.getResponseCode() == 201) {
+                String json = readData(con);
+                return json.contains("true");
+            } else {
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeFavoriteVacancy(long chatId, long vacancyId) {
+        String token = tryGetAuthToken(chatId);
+
+        URL url;
+        try {
+            url = new URL(FAVORITES_PATH);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+
+            con.setRequestProperty("X-Api-App-Id", APP_KEY);
+            con.setRequestProperty("Authorization", token);
+
+            writeData(con.getOutputStream(), "ids[0]=" + vacancyId);
+
+            return con.getResponseCode() == 204;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     private HttpURLConnection requestGet(String path, String authToken) {
         URL url;
         try {
@@ -159,10 +219,9 @@ public class NetworkServiceImpl implements NetworkService {
 
     @Override
     public UserInfo loadUser(long chatId) {
-        AuthToken token = authService.getToken(chatId);
-        String strToken = token.getTokenType() + " " + token.getAccessToken();
+        String token = tryGetAuthToken(chatId);
 
-        HttpURLConnection connection = requestGet(CURRENT_USER_PATH, strToken);
+        HttpURLConnection connection = requestGet(CURRENT_USER_PATH, token);
         UserInfo userInfo = null;
         try {
             if (connection != null && connection.getResponseCode() == 200) {
@@ -174,5 +233,39 @@ public class NetworkServiceImpl implements NetworkService {
         }
 
         return userInfo;
+    }
+
+    private String tryGetAuthToken(long chatId) {
+        AuthService authService = AuthServiceImpl.getInstance();
+        if (!authService.isLoggedIn(chatId)) {
+            throw new NotAuthorizedException("User must be authorized to execute operation");
+        }
+        AuthToken authToken = authService.getToken(chatId);
+
+        return authToken.getTokenType() + " " + authToken.getAccessToken();
+    }
+
+    private String readData(HttpURLConnection connection) {
+        StringBuilder result = new StringBuilder();
+
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Objects.requireNonNull(result).toString();
+    }
+
+    private void writeData(OutputStream out, String data) {
+        try {
+            out.write(data.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
