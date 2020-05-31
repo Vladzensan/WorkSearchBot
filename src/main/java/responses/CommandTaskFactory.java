@@ -1,11 +1,14 @@
 package responses;
 
-import authorization.LoginService;
-import authorization.LoginServiceImpl;
+import authorization.AuthService;
+import authorization.AuthServiceImpl;
 import locale.LocaleService;
 import locale.LocaleServiceImpl;
+import network.NetworkServiceImpl;
+import network.NetworkUserService;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import user.User;
+import user.UserInfo;
 
 import java.util.*;
 
@@ -33,7 +36,49 @@ public class CommandTaskFactory {
         instance.put(Command.MENU, CommandTaskFactory::handleMenu);
         instance.put(Command.AUTH, CommandTaskFactory::handleAuth);
         instance.put(Command.LANGUAGE, CommandTaskFactory::handleLanguage);
+        instance.put(Command.PROFILE, CommandTaskFactory::handleProfile);
+        instance.put(Command.PROFILE_INFO, CommandTaskFactory::handleProfileInfo);
+        instance.put(Command.RESUMES, CommandTaskFactory::handleResumes);
+        instance.put(Command.CREATE_RESUME, CommandTaskFactory::handleCreateResume);
 
+    }
+
+    private static Response handleCreateResume(String s, User user) {
+        Response response = new Response();
+        response.setMessage("Not implemented yet");
+        return response;
+    }
+
+    private static Response handleResumes(String s, User user) {
+        Response response = new Response();
+        response.setMessage("Not implemented yet");
+        return response;
+    }
+
+    private static Response handleProfileInfo(String s, User user) {
+        NetworkUserService network = new NetworkServiceImpl();
+        UserInfo userInfo = network.loadUser(user.getChatId());
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        Response response = new Response();
+
+        response.setMessage("-" + constants.getString("name_property") + ": " + userInfo.getName() + "\n-" +
+                constants.getString("email_property") + ": " + userInfo.getEmail() + "\n-" +
+                constants.getString("phone_property") + ": " + userInfo.getPhoneNumber() + "\n-" +
+                constants.getString("hr_property") + ": " + (userInfo.isHr() ? "+" : "-") + "\n-" +
+                constants.getString("regdate_property") + ": " + new Date(userInfo.getRegistrationDate() * 1000L).toString() + "\n-" +
+                constants.getString("photo_property") + ": " + userInfo.getPhotoPath());
+
+        return response;
+    }
+
+    private static Response handleProfile(String query, User user) {
+        final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE_INFO, Command.RESUMES, Command.CREATE_RESUME));
+        Response response = new Response();
+        Locale locale = user.getCurrentLocale();
+        response.setMessage(Command.PROFILE_INFO.getCaption(locale));
+        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommands, locale));
+        return response;
     }
 
     private static Response helpHandler(String query, User user) {
@@ -49,7 +94,7 @@ public class CommandTaskFactory {
         Response response = new Response();
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
-        LoginService loginService = LoginServiceImpl.getInstance();
+        AuthService loginService = AuthServiceImpl.getInstance();
 
         String[] tokens = query.split("\\s+");
         if (tokens.length == 1) {
