@@ -2,6 +2,7 @@ package responses;
 
 import authorization.AuthService;
 import authorization.AuthServiceImpl;
+import commands.CommandEnum;
 import filters.Filter;
 import filters.FiltersDao;
 import filters.UserFiltersDao;
@@ -22,14 +23,14 @@ import java.util.*;
 public class CommandTaskFactory {
 
     private static FiltersDao filtersDao = UserFiltersDao.getInstance();
-    private static Map<Command, CommandTask> instance;
+    private static Map<CommandEnum, CommandTask> instance;
     private static LocaleService localeService = LocaleServiceImpl.getInstance();
     private static Response response;
 
     private CommandTaskFactory() {
     }
 
-    public static CommandTask getTask(Command command) {
+    public static CommandTask getTask(CommandEnum command) {
         if (instance == null) {
             initializeTasks();
         }
@@ -86,6 +87,7 @@ public class CommandTaskFactory {
     private static Response handleFavorites(String s, User user) {
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
         try {
+            NetworkService networkService = new NetworkServiceImpl();
             List<Vacancy> favoriteVacancies = networkService.getFavoriteVacancies(user.getChatId());
             return getVacanciesResponse(favoriteVacancies);
         } catch (NotAuthorizedException e) {
@@ -117,6 +119,7 @@ public class CommandTaskFactory {
 
         return response;
     }
+
     private static Response getVacanciesResponse(List<Vacancy> favoriteVacancies) {
         response = new Response();
 
@@ -346,7 +349,7 @@ public class CommandTaskFactory {
     }
 
     private static Response handleProfile(String query, User user) {
-        final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE_INFO, Command.RESUMES, Command.CREATE_RESUME, Command.BACK_MENU));
+        final List<CommandEnum> menuCommands = new ArrayList<>(Arrays.asList(CommandEnum.PROFILE_INFO, CommandEnum.RESUMES, CommandEnum.CREATE_RESUME, CommandEnum.BACK_MENU));
         Response response = new Response();
         Locale locale = user.getCurrentLocale();
         response.setMessage(CommandEnum.PROFILE_INFO.getCaption(locale));

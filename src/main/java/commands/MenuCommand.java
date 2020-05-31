@@ -3,8 +3,6 @@ package commands;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import responses.Response;
 import user.User;
-import locale.LocaleService;
-import locale.LocaleServiceImpl;
 
 import java.util.*;
 
@@ -15,20 +13,6 @@ public class MenuCommand extends Command {
 
     public MenuCommand(String s, User user) {
         super(s, user);
-    }
-
-    @Override
-    public Response execute() {
-
-        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
-
-        response = new Response();
-
-        response.setMessage(constants.getString("welcome_message"));
-
-        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommandEnums, user.getCurrentLocale()));
-
-        return response;
     }
 
     private static List<List<InlineKeyboardButton>> mapButtonsByTwo(List<CommandEnum> commandEnums, Locale locale) {
@@ -57,6 +41,20 @@ public class MenuCommand extends Command {
         }
 
         return rowsInline;
+    }
+
+    @Override
+    public Response execute() {
+
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        response = new Response();
+
+        response.setMessage(constants.getString("welcome_message"));
+
+        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommandEnums, user.getCurrentLocale()));
+
+        return response;
     }
 
     @Override

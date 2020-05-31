@@ -26,7 +26,7 @@ public class UserInfo {
                     @JsonProperty("email_confirmed") boolean isEmailConfirmed, @JsonProperty("hr") boolean isHr,
                     @JsonProperty("photo") String photoPath, @JsonProperty("id_cv") int idCv,
                     @JsonProperty("autologin") String autoLoginLink, @JsonProperty("is_full_registration") boolean isFullRegistration,
-                    @JsonProperty("soul_id") long soulId,@JsonProperty("hasBan") boolean hasBan) {
+                    @JsonProperty("soul_id") long soulId, @JsonProperty("hasBan") boolean hasBan) {
         this.userId = userId;
         this.email = email;
         this.name = name;
