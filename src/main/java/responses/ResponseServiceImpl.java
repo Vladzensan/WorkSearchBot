@@ -6,6 +6,8 @@ import user.User;
 import user.UserDao;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResponseServiceImpl implements ResponseService {
 
@@ -27,14 +29,33 @@ public class ResponseServiceImpl implements ResponseService {
 
         String[] words = request.split("\\s+");
 
-        Command command = defineCommand(words[0]);
-        System.out.println(command.getCommand());
+        CommandEnum commandEnum = defineCommand(words[0]);
+        System.out.println(commandEnum.getCommand());
 
+        Map<CommandEnum, CommandCreator> commandCreator = new HashMap<>();
+        CommandCreator creator;
+        commandCreator.put(CommandEnum.MENU, (String s, User user) -> new MenuCommand(s, user));
+        commandCreator.put(CommandEnum.LANGUAGE, (String s, User user) -> new LanguageCommand(s, user));
+        //commandCreator.put();
+        //commandCreator.put();
+        //commandCreator.put();
+
+        System.out.println(commandEnum);
+
+        creator = commandCreator.get(commandEnum);
+//        if (commandCreator.containsKey(commandEnum)){
+//            creator = commandCreator.get(commandEnum);
+//        }else{
+//            creator = commandCreator.get(CommandEnum.OTHER);
+//        }
         User user = userDao.getUserById(chatId);
         user.setCurrentUpdate(update);
 
-        return CommandTaskFactory.getTask(command).execute(request, user);
+        Command command = creator.create(request, user);
 
+        System.out.println("shit");
+
+        return command.execute();
     }
 
     private void validatePresentUser(long chatId) {
