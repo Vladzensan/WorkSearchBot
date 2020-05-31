@@ -1,11 +1,16 @@
 package responses;
 
+import commands.*;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import user.ArrayListUserDao;
 import user.User;
 import user.UserDao;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+//import static jdk.internal.org.jline.utils.Colors.s;
 
 public class ResponseServiceImpl implements ResponseService {
 
@@ -27,10 +32,31 @@ public class ResponseServiceImpl implements ResponseService {
 
         String[] words = request.split("\\s+");
 
-        Command command = defineCommand(words[0]);
-        System.out.println(command.getCommand());
+        CommandEnum commandEnum = defineCommand(words[0]);
+        System.out.println(commandEnum.getCommand());
 
-        return CommandTaskFactory.getTask(command).execute(request, userDao.getUserById(chatId));
+        Map<CommandEnum, CommandCreator> commandCreator = new HashMap<>();
+        CommandCreator creator;
+        commandCreator.put(CommandEnum.MENU, (String s, User user) -> new MenuCommand(s, user));
+        commandCreator.put(CommandEnum.LANGUAGE, (String s, User user) -> new LanguageCommand(s, user));
+        //commandCreator.put();
+        //commandCreator.put();
+        //commandCreator.put();
+
+        System.out.println(commandEnum);
+
+        creator = commandCreator.get(commandEnum);
+//        if (commandCreator.containsKey(commandEnum)){
+//            creator = commandCreator.get(commandEnum);
+//        }else{
+//            creator = commandCreator.get(CommandEnum.OTHER);
+//        }
+
+        Command command = creator.create(request, userDao.getUserById(chatId));
+
+        System.out.println("shit");
+
+        return command.execute();
 
     }
 
@@ -40,11 +66,11 @@ public class ResponseServiceImpl implements ResponseService {
         }
     }
 
-    private Command defineCommand(String request) {
-        return Arrays.stream(Command.values())
-                .filter(command -> command.getCommand().equals(request.trim().toLowerCase()))
+    private CommandEnum defineCommand(String request) {
+        return Arrays.stream(CommandEnum.values())
+                .filter(commandEnum -> commandEnum.getCommand().equals(request.trim().toLowerCase()))
                 .findAny()
-                .orElse(Command.OTHER);
+                .orElse(CommandEnum.OTHER);
     }
 
 

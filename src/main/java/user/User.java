@@ -1,14 +1,14 @@
 package user;
 
 import lombok.Data;
-import responses.Command;
+import commands.CommandEnum;
 
 import java.util.Locale;
 
 @Data
 public class User {
     private Locale currentLocale;
-    private Command state;
+    private CommandEnum state;
     private long chatId;
 
     public User(long chatId) {

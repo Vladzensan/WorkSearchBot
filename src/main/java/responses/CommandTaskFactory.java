@@ -2,6 +2,7 @@ package responses;
 
 import authorization.AuthService;
 import authorization.AuthServiceImpl;
+import commands.CommandEnum;
 import filters.Filter;
 import filters.FiltersDao;
 import filters.UserFiltersDao;
@@ -21,41 +22,42 @@ import java.util.*;
 public class CommandTaskFactory {
 
     private static FiltersDao filtersDao = UserFiltersDao.getInstance();
-    private static Map<Command, CommandTask> instance;
+    private static Map<CommandEnum, CommandTask> instance;
     private static LocaleService localeService = LocaleServiceImpl.getInstance();
     private static Response response;
 
     private CommandTaskFactory() {
     }
 
-    public static CommandTask getTask(Command command) {
+    public static CommandTask getTask(CommandEnum commandEnum) {
         if (instance == null) {
             initializeTasks();
         }
 
-        return instance.get(command);
+        return instance.get(commandEnum);
     }
 
     private static void initializeTasks() {
         instance = new HashMap<>();
 
-        instance.put(Command.HELP, CommandTaskFactory::helpHandler);
-        instance.put(Command.LOGIN, CommandTaskFactory::loginHandler);
-        instance.put(Command.MENU, CommandTaskFactory::handleMenu);
-        instance.put(Command.AUTH, CommandTaskFactory::handleAuth);
-        instance.put(Command.LANGUAGE, CommandTaskFactory::handleLanguage);
-        instance.put(Command.SEARCH, CommandTaskFactory::handleSearch);
-        instance.put(Command.CATALOGUES, CommandTaskFactory::handleCatalogues);
-        instance.put(Command.EXPERIENCE, CommandTaskFactory::handleExperience);
-        instance.put(Command.AGE, CommandTaskFactory::handleAge);
-        instance.put(Command.SALARY, CommandTaskFactory::handleSalary);
-        instance.put(Command.PLACEOFWORK, CommandTaskFactory::handlePlaceOfWork);
-        instance.put(Command.OTHER, CommandTaskFactory::handleOther);
-        instance.put(Command.FIND, CommandTaskFactory::handleFind);
-        instance.put(Command.PROFILE, CommandTaskFactory::handleProfile);
-        instance.put(Command.PROFILE_INFO, CommandTaskFactory::handleProfileInfo);
-        instance.put(Command.RESUMES, CommandTaskFactory::handleResumes);
-        instance.put(Command.CREATE_RESUME, CommandTaskFactory::handleCreateResume);
+        instance.put(CommandEnum.HELP, CommandTaskFactory::helpHandler);
+        instance.put(CommandEnum.LOGIN, CommandTaskFactory::loginHandler);
+        instance.put(CommandEnum.MENU, CommandTaskFactory::handleMenu);
+        instance.put(CommandEnum.AUTH, CommandTaskFactory::handleAuth);
+        instance.put(CommandEnum.LANGUAGE, CommandTaskFactory::handleLanguage);
+        instance.put(CommandEnum.SEARCH, CommandTaskFactory::handleSearch);
+        instance.put(CommandEnum.CATALOGUES, CommandTaskFactory::handleCatalogues);
+        instance.put(CommandEnum.EXPERIENCE, CommandTaskFactory::handleExperience);
+        instance.put(CommandEnum.AGE, CommandTaskFactory::handleAge);
+        instance.put(CommandEnum.SALARYFROM, CommandTaskFactory::handleSalaryFrom);
+        instance.put(CommandEnum.SALARYTO, CommandTaskFactory::handleSalaryTo);
+        instance.put(CommandEnum.PLACEOFWORK, CommandTaskFactory::handlePlaceOfWork);
+        instance.put(CommandEnum.OTHER, CommandTaskFactory::handleOther);
+        instance.put(CommandEnum.FIND, CommandTaskFactory::handleFind);
+        instance.put(CommandEnum.PROFILE, CommandTaskFactory::handleProfile);
+        instance.put(CommandEnum.PROFILE_INFO, CommandTaskFactory::handleProfileInfo);
+        instance.put(CommandEnum.RESUMES, CommandTaskFactory::handleResumes);
+        instance.put(CommandEnum.CREATE_RESUME, CommandTaskFactory::handleCreateResume);
 
     }
 
@@ -82,11 +84,12 @@ public class CommandTaskFactory {
     }
 
     private static Response handleOther(String s, User user) {
-        final List<Command> filterCommands = new ArrayList<>(Arrays.asList(Command.PLACEOFWORK, Command.SALARY, Command.EXPERIENCE, Command.CATALOGUES, Command.FIND));
+        final List<CommandEnum> filterCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.PLACEOFWORK, CommandEnum.EXPERIENCE,
+                CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.CATALOGUES, CommandEnum.FIND));
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
         Response response = new Response();
 
-        if (!filterCommands.contains(user.getState())) {
+        if (!filterCommandEnums.contains(user.getState())) {
             response.setMessage(constants.getString("unsupported_cmd"));
         } else {
             response = setFilter(s, user);
@@ -96,16 +99,17 @@ public class CommandTaskFactory {
     }
 
     private static Response setFilter(String s, User user) {
-        final List<Command> filterCommands = new ArrayList<>(Arrays.asList(Command.CATALOGUES, Command.EXPERIENCE,
-                Command.SALARY, Command.AGE, Command.PLACEOFWORK, Command.FIND));
+        final List<CommandEnum> filterCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.CATALOGUES, CommandEnum.EXPERIENCE,
+                CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.PLACEOFWORK, CommandEnum.FIND));
 
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
-        Map<Command, Filter> commandsToFilters = new HashMap<>();
-        commandsToFilters.put(Command.CATALOGUES, Filter.CATALOGUES);
-        commandsToFilters.put(Command.PLACEOFWORK, Filter.PLACE_OF_WORK);
-        commandsToFilters.put(Command.AGE, Filter.AGE);
-        commandsToFilters.put(Command.EXPERIENCE, Filter.EXPERIENCE);
-        //commandsToFilters.put(Command.SALARY, Filter.SALARY_FROM); TODO: change salary structure
+        Map<CommandEnum, Filter> commandsToFilters = new HashMap<>();
+        commandsToFilters.put(CommandEnum.CATALOGUES, Filter.CATALOGUES);
+        commandsToFilters.put(CommandEnum.PLACEOFWORK, Filter.PLACE_OF_WORK);
+        commandsToFilters.put(CommandEnum.AGE, Filter.AGE);
+        commandsToFilters.put(CommandEnum.EXPERIENCE, Filter.EXPERIENCE);
+        commandsToFilters.put(CommandEnum.SALARYFROM, Filter.SALARY_FROM);
+        commandsToFilters.put(CommandEnum.SALARYTO, Filter.SALARY_TO);
 
         response = new Response();
 
@@ -113,9 +117,9 @@ public class CommandTaskFactory {
 
         response.setMessage(constants.getString("filter_header"));
 
-        response.getMarkup().setKeyboard(mapButtonsByTwo(filterCommands, user.getCurrentLocale()));
+        response.getMarkup().setKeyboard(mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale()));
 
-        user.setState(Command.SEARCH);
+        user.setState(CommandEnum.SEARCH);
 
         return response;
     }
@@ -125,7 +129,9 @@ public class CommandTaskFactory {
 
         response = new Response();
 
-        response.setMessage(constants.getString("filter_experience_helper"));
+        //response.setMessage( );
+
+        user.setState(CommandEnum.EXPERIENCE);
 
         return response;
     }
@@ -137,15 +143,31 @@ public class CommandTaskFactory {
 
         response.setMessage(constants.getString("filter_age_helper"));
 
+        user.setState(CommandEnum.AGE);
+
         return response;
     }
 
-    private static Response handleSalary(String query, User user) {
+    private static Response handleSalaryFrom(String query, User user) {
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
         response = new Response();
 
-        response.setMessage(constants.getString("filter_salary_helper"));
+        response.setMessage("Enter min salary");//TODO:add to constants
+
+        user.setState(CommandEnum.SALARYFROM);
+
+        return response;
+    }
+
+    private static Response handleSalaryTo(String query, User user) {
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+
+        response = new Response();
+
+        response.setMessage("Enter max salary");//TODO:add to constants
+
+        user.setState(CommandEnum.SALARYTO);
 
         return response;
     }
@@ -157,22 +179,24 @@ public class CommandTaskFactory {
 
         response.setMessage(constants.getString("filter_place_of_work_helper"));
 
+        user.setState(CommandEnum.PLACEOFWORK);
+
         return response;
     }
 
     private static Response handleSearch(String query, User user) {
-        final List<Command> filterCommands = new ArrayList<>(Arrays.asList(Command.CATALOGUES, Command.EXPERIENCE,
-                Command.SALARY, Command.AGE, Command.PLACEOFWORK, Command.FIND));
+        final List<CommandEnum> filterCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.CATALOGUES, CommandEnum.EXPERIENCE,
+                CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.PLACEOFWORK, CommandEnum.FIND));
 
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
-        user.setState(Command.SEARCH);
+        user.setState(CommandEnum.SEARCH);
 
         response = new Response();
 
         response.setMessage(constants.getString("filter_header"));
 
-        response.getMarkup().setKeyboard(mapButtonsByTwo(filterCommands, user.getCurrentLocale()));
+        response.getMarkup().setKeyboard(mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale()));
 
         filtersDao.clearFilters(user.getChatId());//clear filters to start new search history
 
@@ -200,7 +224,7 @@ public class CommandTaskFactory {
 
         response.setMessage(messageCatalogues.toString());
 
-        user.setState(Command.CATALOGUES);
+        user.setState(CommandEnum.CATALOGUES);
 
         return response;
     }
@@ -267,31 +291,31 @@ public class CommandTaskFactory {
     }
 
     private static Response handleProfile(String query, User user) {
-        final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE_INFO, Command.RESUMES, Command.CREATE_RESUME));
+        final List<CommandEnum> menuCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.PROFILE_INFO, CommandEnum.RESUMES, CommandEnum.CREATE_RESUME));
         Response response = new Response();
         Locale locale = user.getCurrentLocale();
-        response.setMessage(Command.PROFILE_INFO.getCaption(locale));
-        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommands, locale));
+        response.setMessage(CommandEnum.PROFILE_INFO.getCaption(locale));
+        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommandEnums, locale));
         return response;
     }
 
 
     private static Response handleMenu(String query, User user) {
-        final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE, Command.AUTH,
-                Command.SEARCH, Command.FAVORITES, Command.LANGUAGE));
+        final List<CommandEnum> menuCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.PROFILE, CommandEnum.AUTH,
+                CommandEnum.SEARCH, CommandEnum.FAVORITES, CommandEnum.LANGUAGE));
         response = new Response();
         response.setMessage("WorkSearch bot menu:");
 
-        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommands, user.getCurrentLocale()));
+        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommandEnums, user.getCurrentLocale()));
         return response;
     }
 
     private static Response handleAuth(String query, User user) {
-        final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.LOGIN, Command.LOGOUT));
+        final List<CommandEnum> menuCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.LOGIN, CommandEnum.LOGOUT));
 
         response = new Response();
-        response.setMessage(Command.AUTH.getCaption(user.getCurrentLocale()));
-        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommands, user.getCurrentLocale()));
+        response.setMessage(CommandEnum.AUTH.getCaption(user.getCurrentLocale()));
+        response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommandEnums, user.getCurrentLocale()));
 
         return response;
     }
@@ -322,14 +346,14 @@ public class CommandTaskFactory {
         return response;
     }
 
-    private static List<List<InlineKeyboardButton>> mapButtonsByTwo(List<Command> commands, Locale locale) {
+    private static List<List<InlineKeyboardButton>> mapButtonsByTwo(List<CommandEnum> commandEnums, Locale locale) {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
         int i = 0;
-        for (Command command
-                : commands) {
+        for (CommandEnum commandEnum
+                : commandEnums) {
 
             if (i % 2 == 0 && i > 0) {
                 rowsInline.add(rowInline);
@@ -337,9 +361,9 @@ public class CommandTaskFactory {
             }
 
             rowInline.add(new InlineKeyboardButton()
-                    .setText(command.getCaption(locale))
-                    .setCallbackData(command.getCommand())
-                    .setSwitchInlineQueryCurrentChat(command.getCommand()));
+                    .setText(commandEnum.getCaption(locale))
+                    .setCallbackData(commandEnum.getCommand())
+                    .setSwitchInlineQueryCurrentChat(commandEnum.getCommand()));
             i++;
         }
 
