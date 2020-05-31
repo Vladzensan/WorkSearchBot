@@ -7,4 +7,6 @@ public interface AuthService {
 
     boolean isLoggedIn(long chatId);
 
+    boolean logout(long chatId);
+
 }

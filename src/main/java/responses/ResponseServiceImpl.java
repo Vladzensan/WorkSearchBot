@@ -30,7 +30,10 @@ public class ResponseServiceImpl implements ResponseService {
         Command command = defineCommand(words[0]);
         System.out.println(command.getCommand());
 
-        return CommandTaskFactory.getTask(command).execute(request, userDao.getUserById(chatId));
+        User user = userDao.getUserById(chatId);
+        user.setCurrentUpdate(update);
+
+        return CommandTaskFactory.getTask(command).execute(request, user);
 
     }
 

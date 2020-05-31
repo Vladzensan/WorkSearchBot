@@ -68,6 +68,26 @@ public class NetworkServiceImpl implements NetworkService {
     }
 
     @Override
+    public boolean logout(long chatId) {
+        String token = tryGetAuthToken(chatId);
+
+        URL url;
+        try {
+            url = new URL(AUTH_PATH);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            con.setRequestProperty("X-Api-App-Id", APP_KEY);
+
+            writeData(con.getOutputStream(), "access_token=" + token.substring(token.indexOf(' ') + 1));
+
+            return con.getResponseCode() == 204;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public List<Catalogue> getCataloguesList() {
         List<Catalogue> catalogues;
         try {
@@ -127,7 +147,6 @@ public class NetworkServiceImpl implements NetworkService {
 
         List<Vacancy> vacancies;
         try {
-            URL url = new URL(FAVORITES_PATH);
             HttpURLConnection connection = requestGet(FAVORITES_PATH, token);
 
             if (connection != null && connection.getResponseCode() == 200) {

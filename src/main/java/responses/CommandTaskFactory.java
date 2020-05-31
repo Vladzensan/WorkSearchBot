@@ -59,7 +59,27 @@ public class CommandTaskFactory {
         instance.put(Command.RESUMES, CommandTaskFactory::handleResumes);
         instance.put(Command.CREATE_RESUME, CommandTaskFactory::handleCreateResume);
         instance.put(Command.FAVORITES, CommandTaskFactory::handleFavorites);
+        instance.put(Command.LOGOUT, CommandTaskFactory::handleLogout);
+        instance.put(Command.BACK_MENU, CommandTaskFactory::handleBackMenu);
 
+    }
+
+    private static Response handleBackMenu(String s, User user) {
+        Response response = handleMenu(s, user);
+        response.setEditMessageId(user.getCurrentUpdate().getCallbackQuery().getMessage().getMessageId());
+        return response;
+    }
+
+    private static Response handleLogout(String s, User user) {
+        ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
+        AuthService authService = AuthServiceImpl.getInstance();
+        boolean isSuccessful = authService.logout(user.getChatId());
+        response = new Response();
+
+        response.setMessage(isSuccessful
+                ? constants.getString("logout_success_msg")
+                : constants.getString("logout_failure_msg"));
+        return response;
     }
 
     private static Response handleFavorites(String s, User user) {
@@ -292,11 +312,14 @@ public class CommandTaskFactory {
     }
 
     private static Response handleProfile(String query, User user) {
-        final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE_INFO, Command.RESUMES, Command.CREATE_RESUME));
+        final List<Command> menuCommands = new ArrayList<>(Arrays.asList(Command.PROFILE_INFO, Command.RESUMES, Command.CREATE_RESUME, Command.BACK_MENU));
         Response response = new Response();
         Locale locale = user.getCurrentLocale();
         response.setMessage(Command.PROFILE_INFO.getCaption(locale));
         response.getMarkup().setKeyboard(mapButtonsByTwo(menuCommands, locale));
+
+        int editMessageId = user.getCurrentUpdate().getCallbackQuery().getMessage().getMessageId();
+        response.setEditMessageId(editMessageId);
         return response;
     }
 

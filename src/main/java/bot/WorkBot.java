@@ -1,7 +1,9 @@
 package bot;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import responses.Response;
@@ -22,23 +24,33 @@ public class WorkBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        // We check if the update has a message and the message has text
-
         if (update.hasCallbackQuery() || update.hasMessage() && update.getMessage().hasText()) {
 
             Response response = responseService.getResponse(update);
 
             long chatId = getChatId(update);
-            SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
-                    .setChatId(chatId)
-                    .setText(response.getMessage());
 
-            if (response.hasKeyboardMarkup()) {
-                message.setReplyMarkup(response.getMarkup());
+            BotApiMethod method;
+            if (response.getEditMessageId() == -1) {
+                SendMessage sendMessage = new SendMessage()
+                        .setChatId(chatId)
+                        .setText(response.getMessage());
+
+                if (response.hasKeyboardMarkup()) {
+                    sendMessage.setReplyMarkup(response.getMarkup());
+                }
+
+                method = sendMessage;
+            } else {
+                method = new EditMessageText()
+                        .setChatId(chatId)
+                        .setMessageId(response.getEditMessageId())
+                        .setReplyMarkup(response.getMarkup())
+                        .setText(response.getMessage());
             }
 
             try {
-                execute(message); // Call method to send the message
+                execute(method);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }

@@ -17,6 +17,7 @@ public enum Command {
     CREATE_RESUME("/createresume","create_resume_item"),
     SEARCH("/search", "search_item"),
     FIND("/find", "find_item"),
+    BACK_MENU("/backmenu", "back_menu_item"),
     FAVORITES("/favorites", "favorites_item"),
     CATALOGUES("/catalogues", "catalogues_item"),
     SALARY("/salary", "salary_item"),

@@ -5,6 +5,7 @@ import network.NetworkService;
 import network.NetworkServiceImpl;
 
 import javax.security.auth.login.FailedLoginException;
+import javax.ws.rs.NotAuthorizedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,19 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean isLoggedIn(long chatId) {
         return chatTokens.containsKey(chatId);
+    }
+
+    @Override
+    public boolean logout(long chatId) {
+        try {
+            if (networkService.logout(chatId)) {
+                chatTokens.remove(chatId);
+                return true;
+            }
+        } catch (NotAuthorizedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private static class LoginServiceHolder {
