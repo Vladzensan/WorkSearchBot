@@ -52,7 +52,7 @@ public class CommandTaskFactory {
         instance.put(Command.FIND, CommandTaskFactory::handleFind);
     }
 
-    private static Response handleFind(String s, User user){
+    private static Response handleFind(String s, User user) {
         NetworkService networkService = new NetworkServiceImpl();
 
         List<Vacancy> vacancies = networkService.getVacanciesList(filtersDao.getFilters(user.getChatId()));

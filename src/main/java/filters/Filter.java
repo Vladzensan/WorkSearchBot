@@ -10,11 +10,11 @@ public enum Filter {
 
     private String name;
 
-    public String getName() {
-        return this.name;
-    }
-
     Filter(String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

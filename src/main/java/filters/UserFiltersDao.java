@@ -6,12 +6,12 @@ import java.util.Map;
 public class UserFiltersDao implements FiltersDao {
     private Map<Long, Map<Filter, String>> userFilters;
 
-    public static UserFiltersDao getInstance() {
-        return FilterDaoHolder.instance;
-    }
-
     private UserFiltersDao() {
         userFilters = new HashMap<>();
+    }
+
+    public static UserFiltersDao getInstance() {
+        return FilterDaoHolder.instance;
     }
 
     @Override
