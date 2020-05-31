@@ -57,8 +57,8 @@ public class MenuCommand extends Command {
         return response;
     }
 
-    @Override
-    public Command create(String s, User user) {
-        return new MenuCommand(s, user);
-    }
+//    @Override
+//    public Command create(String s, User user) {
+//        return new MenuCommand(s, user);
+//    }
 }

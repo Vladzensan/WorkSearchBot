@@ -5,7 +5,7 @@ import locale.LocaleServiceImpl;
 import responses.Response;
 import user.User;
 
-public abstract class Command implements CommandCreator {
+public abstract class Command  {
 
     protected static LocaleService localeService = LocaleServiceImpl.getInstance();
     protected static CommandEnum commandName;
