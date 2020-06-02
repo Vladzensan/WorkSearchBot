@@ -7,7 +7,6 @@ import java.util.Locale;
 
 public enum CommandEnum {
     MENU("/menu", "menu_item"),
-    HELP("/help", "help_item"),
     AUTH("/auth", "auth_item"),
     LOGIN("/login", "login_item"),
     LOGOUT("/logout", "logout_item"),

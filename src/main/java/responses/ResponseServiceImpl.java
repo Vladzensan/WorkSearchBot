@@ -1,6 +1,19 @@
 package responses;
 
-import commands.*;
+import commands.Command;
+import commands.CommandCreator;
+import commands.CommandEnum;
+import commands.auth.AuthCommand;
+import commands.auth.LoginCommand;
+import commands.auth.LogoutCommand;
+import commands.profile.FavoritesCommand;
+import commands.profile.LanguageCommand;
+import commands.profile.ProfileCommand;
+import commands.profile.ProfileInfoCommand;
+import commands.search.*;
+import commands.utility.BackMenuCommand;
+import commands.utility.MenuCommand;
+import commands.utility.NextPageCommand;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import user.ArrayListUserDao;
 import user.User;
@@ -13,6 +26,7 @@ import java.util.Map;
 public class ResponseServiceImpl implements ResponseService {
 
     private UserDao userDao = ArrayListUserDao.getInstance();
+    private Map<CommandEnum, CommandCreator> commandCreator = getCommands();
 
     public Response getResponse(Update update) {
         String request = "undefined";
@@ -33,14 +47,7 @@ public class ResponseServiceImpl implements ResponseService {
         CommandEnum commandEnum = defineCommand(words[0]);
         System.out.println(commandEnum.getCommand());
 
-        Map<CommandEnum, CommandCreator> commandCreator = new HashMap<>();
-        CommandCreator creator;
-        commandCreator.put(CommandEnum.MENU, MenuCommand::new);
-        commandCreator.put(CommandEnum.LANGUAGE, LanguageCommand::new);
-
-        System.out.println(commandEnum);
-
-        creator = commandCreator.get(commandEnum);
+        CommandCreator creator = commandCreator.get(commandEnum);
 
         User user = userDao.getUserById(chatId);
         user.setCurrentUpdate(update);
@@ -66,4 +73,27 @@ public class ResponseServiceImpl implements ResponseService {
     }
 
 
+    private Map<CommandEnum, CommandCreator> getCommands() {
+        Map<CommandEnum, CommandCreator> commands = new HashMap<>();
+
+        commands.put(CommandEnum.MENU, MenuCommand::new);
+        commands.put(CommandEnum.LANGUAGE, LanguageCommand::new);
+        commands.put(CommandEnum.AUTH, AuthCommand::new);
+        commands.put(CommandEnum.AGE, AgeCommand::new);
+        commands.put(CommandEnum.BACK_MENU, BackMenuCommand::new);
+        commands.put(CommandEnum.CATALOGUES, CataloguesCommand::new);
+        commands.put(CommandEnum.EXPERIENCE, ExperienceCommand::new);
+        commands.put(CommandEnum.FIND, FindCommand::new);
+        commands.put(CommandEnum.FAVORITES, FavoritesCommand::new);
+        commands.put(CommandEnum.LOGIN, LoginCommand::new);
+        commands.put(CommandEnum.LOGOUT, LogoutCommand::new);
+        commands.put(CommandEnum.NEXTPAGE, NextPageCommand::new);
+        commands.put(CommandEnum.OTHER, OtherCommand::new);
+        commands.put(CommandEnum.SEARCH, SearchCommand::new);
+        commands.put(CommandEnum.PROFILE, ProfileCommand::new);
+        commands.put(CommandEnum.PROFILE_INFO, ProfileInfoCommand::new);
+        commands.put(CommandEnum.PLACEOFWORK, WorkPlaceCommand::new);
+
+        return commands;
+    }
 }

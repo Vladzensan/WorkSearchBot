@@ -2,6 +2,8 @@ package vacancies;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class Vacancy {
     private int id;
@@ -19,4 +21,15 @@ public class Vacancy {
     private int placeOfWork;
     private String companyName;
     private String description;
+
+    @Override
+    public String toString() {
+        StringBuilder vacanciesString = new StringBuilder();
+        vacanciesString.append(this.getId());
+        vacanciesString.append(" ");
+        vacanciesString.append(this.getProfession()).append("\n");
+        vacanciesString.append(new Date(this.getPublicationDate() * 1000L)).append("\n");
+        vacanciesString.append(this.getTown());
+        return vacanciesString.toString();
+    }
 }

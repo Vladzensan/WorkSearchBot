@@ -1,5 +1,6 @@
-package commands;
+package commands.profile;
 
+import commands.Command;
 import responses.Response;
 import user.User;
 
@@ -36,8 +37,4 @@ public class LanguageCommand extends Command {
         return response;
     }
 
-//    @Override
-//    public Command create(String s, User user) {
-//        return new LanguageCommand(s, user);
-//    }
 }
