@@ -12,6 +12,8 @@ public interface NetworkVacanciesService {
 
     List<Vacancy> getVacanciesList(Map<Filter, String> searchParameters);
 
+    Vacancy getVacancy(long vacancyId);
+
     List<Vacancy> getFavoriteVacancies(long chatId);
 
     boolean addFavoriteVacancy(long chatId, long vacancyId);

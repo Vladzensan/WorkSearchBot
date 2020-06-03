@@ -9,10 +9,7 @@ import vacancies.VacanciesInfo;
 import vacancies.Vacancy;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JsonEntitiesMapper implements EntitiesMapper {
     private ObjectMapper mapper = new ObjectMapper();
@@ -25,7 +22,7 @@ public class JsonEntitiesMapper implements EntitiesMapper {
             Vacancy vacancy = new Vacancy();
             vacancy.setId((int) rawVacancy.get("id"));
             vacancy.setProfession((String) rawVacancy.get("profession"));
-            vacancy.setPublicationDate((int) rawVacancy.get("date_published"));
+            vacancy.setPublicationDate(new Date((long) rawVacancy.get("date_published") * 1000L));
             LinkedHashMap<String, Object> townInfo = (LinkedHashMap<String, Object>) rawVacancy.get("town");
             vacancy.setTown((String) townInfo.get("title"));
             vacancies.add(vacancy);

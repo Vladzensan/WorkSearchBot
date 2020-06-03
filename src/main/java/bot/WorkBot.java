@@ -2,14 +2,18 @@ package bot;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import responses.Response;
 import responses.ResponseService;
 import responses.ResponseServiceImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class WorkBot extends TelegramLongPollingBot {
@@ -30,31 +34,14 @@ public class WorkBot extends TelegramLongPollingBot {
 
             long chatId = getChatId(update);
 
-            BotApiMethod method;
-            if (response.getEditMessageId() == -1) {
-                SendMessage sendMessage = new SendMessage()
-                        .setChatId(chatId)
-                        .setText(response.getMessage());
+            for (BotApiMethod method : extractMessages(response, chatId)) {
+                try {
+                    execute(method);
 
-                if (response.hasKeyboardMarkup()) {
-                    sendMessage.setReplyMarkup(response.getMarkup());
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
                 }
-
-                method = sendMessage;
-            } else {
-                method = new EditMessageText()
-                        .setChatId(chatId)
-                        .setMessageId(response.getEditMessageId())
-                        .setReplyMarkup(response.getMarkup())
-                        .setText(response.getMessage());
             }
-
-            try {
-                execute(method);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-
         }
     }
 
@@ -64,6 +51,35 @@ public class WorkBot extends TelegramLongPollingBot {
         } else {
             return update.getCallbackQuery().getMessage().getChatId();
         }
+    }
+
+    private List<BotApiMethod> extractMessages(Response response, long chatId) {
+        List<BotApiMethod> methods = new ArrayList<>();
+        BotApiMethod method;
+        if (response.getEditMessageId() == -1) {
+            SendMessage sendMessage = new SendMessage()
+                    .setChatId(chatId)
+                    .setText(response.getMessage());
+
+            if (response.hasKeyboardMarkup()) {
+                sendMessage.setReplyMarkup(response.getMarkup());
+            }
+
+            methods.add(sendMessage);
+        } else if (response.getEditMessageId() != -1) {
+            methods.add(new EditMessageText()
+                    .setChatId(chatId)
+                    .setMessageId(response.getEditMessageId())
+                    .setReplyMarkup(response.getMarkup())
+                    .setText(response.getMessage()));
+        } else if (response.hasLocation()) {
+            Location loc = response.getLocation();
+            methods.add(new SendLocation()
+                    .setChatId(chatId)
+                    .setLatitude(loc.getLatitude())
+                    .setLongitude(loc.getLatitude()));
+        }
+        return methods;
     }
 
     public String getBotUsername() {
