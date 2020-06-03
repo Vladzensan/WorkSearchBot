@@ -13,13 +13,21 @@ public class FilterChecker {
     private final int MIN_AGE = 17;
 
     public boolean isCorrectInput(String input, Filter filters) {
-        return switch (filters) {
-            case SALARY_TO, SALARY_FROM -> isCorrectPayment(input);
-            case AGE -> isCorrectAge(input);
-            case CATALOGUES -> isCorrectCatalogue(input);
-            case EXPERIENCE -> isCorrectExperience(input);
-            case PLACE_OF_WORK -> isCorrectPlaceOfWork(input);
-        };
+        switch (filters) {
+            case SALARY_TO:
+            case SALARY_FROM:
+                return isCorrectPayment(input);
+            case AGE:
+                return isCorrectAge(input);
+            case CATALOGUES:
+                return isCorrectCatalogue(input);
+            case EXPERIENCE:
+                return isCorrectExperience(input);
+            case PLACE_OF_WORK:
+                return isCorrectPlaceOfWork(input);
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     private boolean isCorrectPayment(String input) {

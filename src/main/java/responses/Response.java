@@ -3,12 +3,13 @@ package responses;
 import lombok.Data;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 @Data
 public class Response {
     Location location;
     private String message = null;
-    private InlineKeyboardMarkup markup;
+    private ReplyKeyboard markup;
     private int editMessageId;
 
     public Response() {
@@ -25,7 +26,7 @@ public class Response {
     }
 
     public boolean hasKeyboardMarkup() {
-        return markup.getKeyboard() != null && !markup.getKeyboard().isEmpty();
+        return markup != null ;
     }
 
 }

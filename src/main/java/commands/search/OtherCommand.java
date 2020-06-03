@@ -7,6 +7,7 @@ import errors.FilterChecker;
 import filters.Filter;
 import filters.FiltersDao;
 import filters.UserFiltersDao;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import responses.Response;
 import user.User;
 
@@ -46,7 +47,7 @@ public class OtherCommand extends Command {
                 response.setMessage(constants.getString("filter_error") + "\n" + constants.getString("filter_header"));
             }
 
-            response.getMarkup().setKeyboard(Utilities.mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale()));
+            response.setMarkup(new InlineKeyboardMarkup(Utilities.mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale())));
 
             user.setState(CommandEnum.SEARCH);
         }

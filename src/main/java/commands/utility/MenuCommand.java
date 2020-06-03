@@ -3,6 +3,7 @@ package commands.utility;
 import commands.Command;
 import commands.CommandEnum;
 import commands.Utilities;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import responses.Response;
 import user.User;
 
@@ -28,7 +29,7 @@ public class MenuCommand extends Command {
         response = new Response();
         response.setMessage("WorkSearch bot menu:");
 
-        response.getMarkup().setKeyboard(Utilities.mapButtonsByTwo(menuCommandEnums, user.getCurrentLocale()));
+        response.setMarkup(new InlineKeyboardMarkup(Utilities.mapButtonsByTwo(menuCommandEnums, user.getCurrentLocale())));
         return response;
     }
 

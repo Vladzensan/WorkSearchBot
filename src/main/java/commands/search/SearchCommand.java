@@ -3,6 +3,7 @@ package commands.search;
 import commands.Command;
 import commands.CommandEnum;
 import commands.Utilities;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import responses.Response;
 import user.User;
 
@@ -29,7 +30,7 @@ public class SearchCommand extends Command {
 
         response.setMessage(constants.getString("filter_header"));
 
-        response.getMarkup().setKeyboard(Utilities.mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale()));
+        response.setMarkup(new InlineKeyboardMarkup(Utilities.mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale())));
 
         //UserFiltersDao.getInstance().clearFilters(user.getChatId());//clear filters to start new search history
 
