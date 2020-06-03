@@ -14,6 +14,7 @@ import commands.search.*;
 import commands.utility.BackMenuCommand;
 import commands.utility.MenuCommand;
 import commands.utility.NextPageCommand;
+import commands.utility.PrevPageCommand;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import user.ArrayListUserDao;
 import user.User;
@@ -88,6 +89,7 @@ public class ResponseServiceImpl implements ResponseService {
         commands.put(CommandEnum.LOGIN, LoginCommand::new);
         commands.put(CommandEnum.LOGOUT, LogoutCommand::new);
         commands.put(CommandEnum.NEXTPAGE, NextPageCommand::new);
+        commands.put(CommandEnum.PREVIOUSPAGE, PrevPageCommand::new);
         commands.put(CommandEnum.OTHER, OtherCommand::new);
         commands.put(CommandEnum.SEARCH, SearchCommand::new);
         commands.put(CommandEnum.PROFILE, ProfileCommand::new);

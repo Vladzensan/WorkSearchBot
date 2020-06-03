@@ -1,6 +1,7 @@
 package filters;
 
 public enum Filter {
+    PAGE("page"),
     SALARY_TO("payment_to"),
     SALARY_FROM("payment_from"),
     AGE("age"),
