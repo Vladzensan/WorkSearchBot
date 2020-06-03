@@ -8,8 +8,11 @@ import java.util.Date;
 public class Vacancy {
     private int id;
     private String profession;
-    private long publicationDate;
+    private Date publicationDate;
     private String town;
+
+    private long longitude;
+    private long latitude;
 
     private int salaryFrom;
     private int salaryTo;
@@ -24,12 +27,10 @@ public class Vacancy {
 
     @Override
     public String toString() {
-        StringBuilder vacanciesString = new StringBuilder();
-        vacanciesString.append(this.getId());
-        vacanciesString.append(" ");
-        vacanciesString.append(this.getProfession()).append("\n");
-        vacanciesString.append(new Date(this.getPublicationDate() * 1000L)).append("\n");
-        vacanciesString.append(this.getTown());
-        return vacanciesString.toString();
+        return this.getId() +
+                " " +
+                this.getProfession() + "\n" +
+                publicationDate.toString() + "\n" +
+                this.getTown();
     }
 }

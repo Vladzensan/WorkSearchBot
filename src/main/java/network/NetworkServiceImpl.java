@@ -32,6 +32,7 @@ public class NetworkServiceImpl implements NetworkService {
     private final String VACANCIES_PATH = "https://api.superjob.ru/2.0/vacancies/?";
     private final String CURRENT_USER_PATH = "https://api.superjob.ru/2.0/user/current";
     private final String FAVORITES_PATH = "https://api.superjob.ru/2.0/favorites/";
+    private final String TOKEN_PATH = "https://api.superjob.ru/2.0/oauth2/access_token/";
 
     private EntitiesMapper entityMapper = new JsonEntitiesMapper();
 
@@ -73,10 +74,11 @@ public class NetworkServiceImpl implements NetworkService {
 
         URL url;
         try {
-            url = new URL(AUTH_PATH);
+            url = new URL(TOKEN_PATH);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("DELETE");
             con.setRequestProperty("X-Api-App-Id", APP_KEY);
+            con.setRequestMethod("DELETE");
+            con.setDoOutput(true);
 
             writeData(con.getOutputStream(), "access_token=" + token.substring(token.indexOf(' ') + 1));
 
@@ -126,6 +128,7 @@ public class NetworkServiceImpl implements NetworkService {
             if (con != null && con.getResponseCode() == 200) {
                 String jsonData = readData(con);
 
+                System.out.println(jsonData);
                 VacanciesInfo vacanciesInfo = entityMapper.mapVacanciesInfo(jsonData);
                 vacancies = new JsonEntitiesMapper().mapVacancies(vacanciesInfo.getObjects());
 
@@ -138,6 +141,11 @@ public class NetworkServiceImpl implements NetworkService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    @Override
+    public Vacancy getVacancy(long vacancyId) {
         return null;
     }
 
