@@ -5,13 +5,14 @@ import locale.LocaleServiceImpl;
 import responses.Response;
 import user.User;
 
-public abstract class Command  {
+public abstract class Command {
 
     protected static LocaleService localeService = LocaleServiceImpl.getInstance();
     protected static CommandEnum commandName;
     protected Response response;
     protected String s;
     protected User user;
+
     public Command(String s, User user) {
         this.s = s;
         this.user = user;

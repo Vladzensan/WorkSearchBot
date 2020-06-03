@@ -22,7 +22,7 @@ public class JsonEntitiesMapper implements EntitiesMapper {
             Vacancy vacancy = new Vacancy();
             vacancy.setId((int) rawVacancy.get("id"));
             vacancy.setProfession((String) rawVacancy.get("profession"));
-            vacancy.setPublicationDate(new Date((long) rawVacancy.get("date_published") * 1000L));
+            vacancy.setPublicationDate(new Date((int) rawVacancy.get("date_published") * 1000L));
             LinkedHashMap<String, Object> townInfo = (LinkedHashMap<String, Object>) rawVacancy.get("town");
             vacancy.setTown((String) townInfo.get("title"));
             vacancies.add(vacancy);

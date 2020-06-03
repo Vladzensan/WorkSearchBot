@@ -1,10 +1,7 @@
 package errors;
 
-import commands.CommandEnum;
 import filters.Filter;
 import network.NetworkServiceImpl;
-
-import java.util.Arrays;
 
 public class FilterChecker {
 

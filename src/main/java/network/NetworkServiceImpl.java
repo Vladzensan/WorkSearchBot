@@ -116,7 +116,7 @@ public class NetworkServiceImpl implements NetworkService {
         List<Vacancy> vacancies;
         try {
             StringBuilder path = new StringBuilder(VACANCIES_PATH);
-            if(searchParameters != null) {
+            if (searchParameters != null) {
                 for (Filter parameter : searchParameters.keySet()) {
                     path.append(parameter.getName());
                     path.append("=");
@@ -132,10 +132,9 @@ public class NetworkServiceImpl implements NetworkService {
 
                 System.out.println(jsonData);
                 VacanciesInfo vacanciesInfo = entityMapper.mapVacanciesInfo(jsonData);
-                if(vacanciesInfo.getTotal() == 0){
+                if (vacanciesInfo.getTotal() == 0) {
                     return null;
-                }else
-                {
+                } else {
                     vacancies = new JsonEntitiesMapper().mapVacancies(vacanciesInfo.getObjects());
                 }
 

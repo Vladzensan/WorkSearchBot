@@ -13,6 +13,8 @@ import user.User;
 import java.util.*;
 
 public class OtherCommand extends Command {
+    private Map<CommandEnum, Filter> commandsToFilters;
+
     public OtherCommand(String s, User user) {
         super(s, user);
         commandsToFilters = new HashMap<>();
@@ -24,28 +26,27 @@ public class OtherCommand extends Command {
         commandsToFilters.put(CommandEnum.SALARYTO, Filter.SALARY_TO);
     }
 
-    private Map<CommandEnum, Filter> commandsToFilters;
-
     @Override
     public Response execute() {
         final List<CommandEnum> filterCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.PLACEOFWORK, CommandEnum.EXPERIENCE,
                 CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.CATALOGUES, CommandEnum.FIND));
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
-        response = new Response();
-
         FilterChecker filterChecker = new FilterChecker();
+
+        Response response = new Response();
 
         if (!filterCommandEnums.contains(user.getState())) {
             response.setMessage(constants.getString("unsupported_cmd"));
         } else {
-            if(filterChecker.isCorrectInput(s, commandsToFilters.get(user.getState()))){
+            if (filterChecker.isCorrectInput(s, commandsToFilters.get(user.getState()))) {
                 response = setFilter(s, user);
                 response.setMessage(constants.getString("filter_header"));
-            }else{
+            } else {
                 response.setMessage(constants.getString("filter_error") + "\n" + constants.getString("filter_header"));
             }
 
+            response.getMarkup().setKeyboard(Utilities.mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale()));
 
             user.setState(CommandEnum.SEARCH);
         }
@@ -54,6 +55,8 @@ public class OtherCommand extends Command {
     }
 
     private Response setFilter(String s, User user) {
+
+        response = new Response();
 
         FiltersDao filtersDao = UserFiltersDao.getInstance();
         filtersDao.addFilter(user.getChatId(), commandsToFilters.get(user.getState()), s);

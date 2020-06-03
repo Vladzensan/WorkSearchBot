@@ -26,7 +26,7 @@ public class FindCommand extends Command {
 
         StringBuilder vacanciesString = new StringBuilder();
 
-        if(vacancies != null) {
+        if (vacancies != null) {
             for (Vacancy vacancy : vacancies) {
                 vacanciesString.append(vacancy.getId());
                 vacanciesString.append(" ");
@@ -34,7 +34,7 @@ public class FindCommand extends Command {
                 vacanciesString.append(vacancy.getPublicationDate() + "\n");
                 vacanciesString.append(vacancy.getTown() + "\n\n");
             }
-        }else{
+        } else {
             vacanciesString.append("Sorry, no vacancies found!");
         }
 

@@ -6,10 +6,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 
 @Data
 public class Response {
+    Location location;
     private String message = null;
     private InlineKeyboardMarkup markup;
     private int editMessageId;
-    Location location;
 
     public Response() {
         markup = new InlineKeyboardMarkup();

@@ -11,7 +11,7 @@ public class BackMenuCommand extends Command {
 
     @Override
     public Response execute() {
-        Response response = new MenuCommand(s,user).execute();
+        Response response = new MenuCommand(s, user).execute();
         response.setEditMessageId(user.getCurrentUpdate().getCallbackQuery().getMessage().getMessageId());
         return response;
     }

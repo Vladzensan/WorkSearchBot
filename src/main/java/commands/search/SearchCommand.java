@@ -3,7 +3,6 @@ package commands.search;
 import commands.Command;
 import commands.CommandEnum;
 import commands.Utilities;
-import filters.UserFiltersDao;
 import responses.Response;
 import user.User;
 

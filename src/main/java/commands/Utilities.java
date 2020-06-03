@@ -1,7 +1,5 @@
 package commands;
 
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -41,7 +39,7 @@ public class Utilities {
         return rowsInline;
     }
 
-    public static List<KeyboardRow> buttonsInKeyboard(List<CommandEnum> commandEnums, Locale locale){
+    public static List<KeyboardRow> buttonsInKeyboard(List<CommandEnum> commandEnums, Locale locale) {
 
         var buttons = new ArrayList<KeyboardRow>();
 
@@ -54,5 +52,7 @@ public class Utilities {
         //keyboard.setKeyboard(buttons);
 
         return buttons;
-    };
+    }
+
+    ;
 }
