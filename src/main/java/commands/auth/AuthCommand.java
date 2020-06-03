@@ -3,6 +3,7 @@ package commands.auth;
 import commands.Command;
 import commands.CommandEnum;
 import commands.Utilities;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import responses.Response;
 import user.User;
 
@@ -21,8 +22,7 @@ public class AuthCommand extends Command {
 
         response = new Response();
         response.setMessage(CommandEnum.AUTH.getCaption(user.getCurrentLocale()));
-        response.getMarkup().setKeyboard(Utilities.mapButtonsByTwo(menuCommandEnums, user.getCurrentLocale()));
-
+        response.setMarkup(new InlineKeyboardMarkup(Utilities.mapButtonsByTwo(menuCommandEnums, user.getCurrentLocale())));
         return response;
     }
 }

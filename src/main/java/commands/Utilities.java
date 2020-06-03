@@ -1,8 +1,6 @@
 package commands;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,20 +37,4 @@ public class Utilities {
         return rowsInline;
     }
 
-    public static List<KeyboardRow> buttonsInKeyboard(List<CommandEnum> commandEnums, Locale locale) {
-
-        var buttons = new ArrayList<KeyboardRow>();
-
-        var row = new KeyboardRow();
-        row.add(new KeyboardButton().setText(commandEnums.get(0).getCaption(locale)));
-
-        buttons.add(new KeyboardRow());
-
-        //var keyboard = new ReplyKeyboardMarkup();
-        //keyboard.setKeyboard(buttons);
-
-        return buttons;
-    }
-
-    ;
 }

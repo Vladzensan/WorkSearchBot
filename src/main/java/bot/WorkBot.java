@@ -7,6 +7,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import responses.Response;
 import responses.ResponseService;
@@ -70,7 +74,7 @@ public class WorkBot extends TelegramLongPollingBot {
             methods.add(new EditMessageText()
                     .setChatId(chatId)
                     .setMessageId(response.getEditMessageId())
-                    .setReplyMarkup(response.getMarkup())
+                    .setReplyMarkup((InlineKeyboardMarkup) response.getMarkup())
                     .setText(response.getMessage()));
         } else if (response.hasLocation()) {
             Location loc = response.getLocation();
