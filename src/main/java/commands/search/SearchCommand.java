@@ -32,7 +32,7 @@ public class SearchCommand extends Command {
 
         response.getMarkup().setKeyboard(Utilities.mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale()));
 
-        UserFiltersDao.getInstance().clearFilters(user.getChatId());//clear filters to start new search history
+        //UserFiltersDao.getInstance().clearFilters(user.getChatId());//clear filters to start new search history
 
         return response;
     }

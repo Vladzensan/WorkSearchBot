@@ -26,12 +26,16 @@ public class FindCommand extends Command {
 
         StringBuilder vacanciesString = new StringBuilder();
 
-        for (Vacancy vacancy : vacancies) {
-            vacanciesString.append(vacancy.getId());
-            vacanciesString.append(" ");
-            vacanciesString.append(vacancy.getProfession() + "\n");
-            vacanciesString.append(vacancy.getPublicationDate() + "\n");
-            vacanciesString.append(vacancy.getTown() + "\n\n");
+        if(vacancies != null) {
+            for (Vacancy vacancy : vacancies) {
+                vacanciesString.append(vacancy.getId());
+                vacanciesString.append(" ");
+                vacanciesString.append(vacancy.getProfession() + "\n");
+                vacanciesString.append(vacancy.getPublicationDate() + "\n");
+                vacanciesString.append(vacancy.getTown() + "\n\n");
+            }
+        }else{
+            vacanciesString.append("Sorry, no vacancies found!");
         }
 
         response.setMessage(vacanciesString.toString());

@@ -114,11 +114,13 @@ public class NetworkServiceImpl implements NetworkService {
         List<Vacancy> vacancies;
         try {
             StringBuilder path = new StringBuilder(VACANCIES_PATH);
-            for (Filter parameter : searchParameters.keySet()) {
-                path.append(parameter.getName());
-                path.append("=");
-                path.append(searchParameters.get(parameter));
-                path.append("&");
+            if(searchParameters != null) {
+                for (Filter parameter : searchParameters.keySet()) {
+                    path.append(parameter.getName());
+                    path.append("=");
+                    path.append(searchParameters.get(parameter));
+                    path.append("&");
+                }
             }
 
             HttpURLConnection con = requestGet(path.toString(), null);
@@ -127,7 +129,12 @@ public class NetworkServiceImpl implements NetworkService {
                 String jsonData = readData(con);
 
                 VacanciesInfo vacanciesInfo = entityMapper.mapVacanciesInfo(jsonData);
-                vacancies = new JsonEntitiesMapper().mapVacancies(vacanciesInfo.getObjects());
+                if(vacanciesInfo.getTotal() == 0){
+                    return null;
+                }else
+                {
+                    vacancies = new JsonEntitiesMapper().mapVacancies(vacanciesInfo.getObjects());
+                }
 
                 return vacancies;
 

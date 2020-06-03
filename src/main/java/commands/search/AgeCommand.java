@@ -1,6 +1,7 @@
 package commands.search;
 
 import commands.Command;
+import commands.CommandEnum;
 import responses.Response;
 import user.User;
 
@@ -18,6 +19,8 @@ public class AgeCommand extends Command {
         response = new Response();
 
         response.setMessage(constants.getString("filter_age_helper"));
+
+        user.setState(CommandEnum.AGE);
 
         return response;
     }
