@@ -95,6 +95,8 @@ public class ResponseServiceImpl implements ResponseService {
         commands.put(CommandEnum.PROFILE, ProfileCommand::new);
         commands.put(CommandEnum.PROFILE_INFO, ProfileInfoCommand::new);
         commands.put(CommandEnum.PLACEOFWORK, WorkPlaceCommand::new);
+        commands.put(CommandEnum.SALARYFROM, SalaryFromCommand::new);
+        commands.put(CommandEnum.SALARYTO, SalaryToCommand::new);
 
         return commands;
     }
