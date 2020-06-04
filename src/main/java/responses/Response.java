@@ -26,7 +26,7 @@ public class Response {
     }
 
     public boolean hasKeyboardMarkup() {
-        return markup != null ;
+        return markup != null;
     }
 
 }
