@@ -37,7 +37,7 @@ public class FindCommand extends Command {
 
         if (vacancies != null && !vacancies.isEmpty()) {
             for (Vacancy vacancy : vacancies) {
-                vacanciesString.append(vacancy.toString()).append("\n\n");
+                vacanciesString.append("/").append(vacancy.toString()).append("\n\n");
             }
             vacanciesString.append("Page - 0");
         } else {

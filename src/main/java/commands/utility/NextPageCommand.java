@@ -38,7 +38,7 @@ public class NextPageCommand extends Command {
             List<Vacancy> vacancies = networkService.getVacanciesList(filtersDao.getFilters(user.getChatId()));
             if (vacancies != null && !vacancies.isEmpty()) {
                 for (Vacancy vacancy : vacancies) {
-                    vacanciesString.append(vacancy.toString()).append("\n\n");
+                    vacanciesString.append("/").append(vacancy.toString()).append("\n\n");
                 }
                 vacanciesString.append("Page - ").append(filtersDao.getFilters(user.getChatId()).get(Filter.PAGE));
             } else {

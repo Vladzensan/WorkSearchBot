@@ -28,7 +28,9 @@ public enum CommandEnum {
     PREVIOUSPAGE("/previouspage", "previous_page_item"),
     NEXTPAGE("/nextpage", "next_page_item"),
     OTHER("undefined", "undefined_item"),
-    CLEARFILTERS("/clearfilters", "clear_filters_item");
+    CLEARFILTERS("/clearfilters", "clear_filters_item"),
+    SHOWVACANCYINFO("/more", "vacancy_info_item"),
+    ADDFAVORITES("/addfavorites", "add_favorites_item");
 
 
     private static LocaleService localeService = LocaleServiceImpl.getInstance();

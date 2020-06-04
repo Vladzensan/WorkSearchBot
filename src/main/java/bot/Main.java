@@ -8,14 +8,14 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class Main {
     public static void main(String[] args) {
-//
-//        ApiContextInitializer.init();
-//        TelegramBotsApi botsApi = new TelegramBotsApi();
-//        try {
-//            botsApi.registerBot(new WorkBot());
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
+
+        ApiContextInitializer.init();
+        TelegramBotsApi botsApi = new TelegramBotsApi();
+        try {
+            botsApi.registerBot(new WorkBot());
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
 
         new NetworkMapsServiceImpl().geocodeLocation("Москва");
     }
