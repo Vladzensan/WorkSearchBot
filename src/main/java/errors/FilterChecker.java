@@ -1,12 +1,9 @@
 package errors;
 
-import commands.CommandEnum;
 import filters.Filter;
-import network.NetworkService;
 import network.NetworkServiceImpl;
 import vacancies.Catalogue;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class FilterChecker {
@@ -51,8 +48,8 @@ public class FilterChecker {
     private boolean isCorrectCatalogue(String input) {
         NetworkServiceImpl networkService = new NetworkServiceImpl();
         List<Catalogue> catalogues = networkService.getCataloguesList();
-        if(!input.matches(CATALOGUE_PATTERN)){
-           return false;
+        if (!input.matches(CATALOGUE_PATTERN)) {
+            return false;
         } else {
             for (Catalogue catalogue :
                     catalogues) {

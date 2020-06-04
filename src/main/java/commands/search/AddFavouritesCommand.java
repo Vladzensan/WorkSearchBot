@@ -1,7 +1,6 @@
 package commands.search;
 
 import commands.Command;
-import network.NetworkService;
 import network.NetworkServiceImpl;
 import responses.Response;
 import user.User;

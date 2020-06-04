@@ -1,11 +1,12 @@
 package bot;
 
+import lombok.SneakyThrows;
+import network.Coordinates;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -27,13 +28,14 @@ public class WorkBot extends TelegramLongPollingBot {
     }
 
 
+    @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasCallbackQuery() || update.hasMessage() && update.getMessage().hasText()) {
 
-            Response response = responseService.getResponse(update);
-
             long chatId = getChatId(update);
+
+            Response response = responseService.getResponse(update);
 
 
             for (BotApiMethod method : extractMessages(response, chatId)) {
@@ -57,7 +59,6 @@ public class WorkBot extends TelegramLongPollingBot {
 
     private List<BotApiMethod> extractMessages(Response response, long chatId) {
         List<BotApiMethod> methods = new ArrayList<>();
-        BotApiMethod method;
         if (response.getEditMessageId() == -1) {
             SendMessage sendMessage = new SendMessage()
                     .setChatId(chatId)
@@ -68,18 +69,20 @@ public class WorkBot extends TelegramLongPollingBot {
             }
 
             methods.add(sendMessage);
-        } else if (response.getEditMessageId() != -1) {
+        }
+        if (response.getEditMessageId() != -1) {
             methods.add(new EditMessageText()
                     .setChatId(chatId)
                     .setMessageId(response.getEditMessageId())
                     .setReplyMarkup((InlineKeyboardMarkup) response.getMarkup())
                     .setText(response.getMessage()));
-        } else if (response.hasLocation()) {
-            Location loc = response.getLocation();
+        }
+        if (response.hasLocation()) {
+            Coordinates loc = response.getLocation();
             methods.add(new SendLocation()
                     .setChatId(chatId)
-                    .setLatitude(loc.getLatitude())
-                    .setLongitude(loc.getLatitude()));
+                    .setLatitude((float) loc.getLatitude())
+                    .setLongitude((float) loc.getLongitude()));
         }
         return methods;
     }

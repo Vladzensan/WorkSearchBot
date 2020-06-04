@@ -23,8 +23,8 @@ public class JsonEntitiesMapper implements EntitiesMapper {
             Vacancy vacancy = new Vacancy();
             vacancy.setId((int) rawVacancy.get("id"));
             vacancy.setProfession((String) rawVacancy.get("profession"));
-            if(rawVacancy.get("address") !=null) {
-                vacancy.setAddress((String)rawVacancy.get("address"));
+            if (rawVacancy.get("address") != null) {
+                vacancy.setAddress((String) rawVacancy.get("address"));
             }
             vacancy.setPublicationDate(new Date((int) rawVacancy.get("date_published") * 1000L));
             LinkedHashMap<String, Object> townInfo = (LinkedHashMap<String, Object>) rawVacancy.get("town");
@@ -67,7 +67,31 @@ public class JsonEntitiesMapper implements EntitiesMapper {
 
     @Override
     public Coordinates mapCoords(String json) {
+        try {
+            Map<String, Object> values = mapper.readValue(json, Map.class);
+            Map<String, Object> response = (Map<String, Object>) values.get("response");
+            Map<String, Object> geoObjectCollection = (Map<String, Object>) response.get("GeoObjectCollection");
+            ArrayList<Object> featureMember = (ArrayList<Object>) geoObjectCollection.get("featureMember");
+            Map<String, Object> geoObject = (Map<String, Object>) featureMember.get(0);
+            Map<String, Object> innerObj = (Map<String, Object>) geoObject.get("GeoObject");
+            Map<String, Object> point = (Map<String, Object>) innerObj.get("Point");
+
+            String pos = (String) point.get("pos");
+            String[] coords = pos.split("\\s+");
+
+            return new Coordinates(Double.valueOf(coords[1]), Double.valueOf(coords[0]));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
 }
+
+//    Map<String, Object> values = mapper.readValue(json, Map.class);
+//    ArrayList<Object> results = (ArrayList<Object>) values.get("results");
+//    Map<String, Object> item = (Map<String, Object>) results.get(0);
+//    ArrayList<Object> locations = (ArrayList<Object>) item.get("locations");
+//    Map<String, Object> properties = (Map<String, Object>) locations.get(0);
+//    Map<String, Double> coords = (Map<String, Double>) properties.get("displayLatLng");

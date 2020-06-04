@@ -1,7 +1,5 @@
 package bot;
 
-import network.NetworkMapsService;
-import network.NetworkMapsServiceImpl;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -16,7 +14,5 @@ public class Main {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-
-        new NetworkMapsServiceImpl().geocodeLocation("Москва");
     }
 }

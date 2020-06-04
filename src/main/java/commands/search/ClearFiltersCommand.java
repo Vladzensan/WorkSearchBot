@@ -16,7 +16,7 @@ public class ClearFiltersCommand extends Command {
     @Override
     public Response execute() {
         UserFiltersDao filtersDao = UserFiltersDao.getInstance();
-        if(filtersDao != null){
+        if (filtersDao != null) {
             filtersDao.clearFilters(user.getChatId());
         }
 

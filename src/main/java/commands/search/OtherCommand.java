@@ -7,6 +7,8 @@ import errors.FilterChecker;
 import filters.Filter;
 import filters.FiltersDao;
 import filters.UserFiltersDao;
+import network.Coordinates;
+import network.NetworkMapsServiceImpl;
 import network.NetworkServiceImpl;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import responses.Response;
@@ -16,10 +18,10 @@ import vacancies.Vacancy;
 import java.util.*;
 
 public class OtherCommand extends Command {
-    private Map<CommandEnum, Filter> commandsToFilters;
-    private ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
     private final List<CommandEnum> filterCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.PLACEOFWORK, CommandEnum.EXPERIENCE,
             CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.CATALOGUES, CommandEnum.FIND));
+    private Map<CommandEnum, Filter> commandsToFilters;
+    private ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
     public OtherCommand(String s, User user) {
         super(s, user);
@@ -36,36 +38,34 @@ public class OtherCommand extends Command {
     public Response execute() {
 
 
-        if(filterCommandEnums.contains(user.getState()) && user.getState() != CommandEnum.FIND){
+        if (filterCommandEnums.contains(user.getState()) && user.getState() != CommandEnum.FIND) {
             response = getFilterResponse();
-        }else if(user.getState() == CommandEnum.FIND){
+        } else if (user.getState() == CommandEnum.FIND) {
             response = getShowVacancyResponse();
-        }else{
+        } else {
             response.setMessage(constants.getString("unsupported_cmd"));
         }
 
         return response;
     }
 
-    private Response getShowVacancyResponse(){
+    private Response getShowVacancyResponse() {
         List<CommandEnum> buttons = new ArrayList<>(Arrays.asList(CommandEnum.ADDFAVORITES));
         NetworkServiceImpl networkService = new NetworkServiceImpl();
         List<Vacancy> vacancies = networkService.getVacanciesList(UserFiltersDao.getInstance().getFilters(user.getChatId()));
 
         response = new Response();
 
-        s = s.replace("/", "").replace("@\\s+", "");
+        s = s.replace("/", "").replace("@\\.+", "");
         Vacancy temp = null;
 
-        if(user.getState() == CommandEnum.FIND){
-            for (Vacancy vacancy:
-                    vacancies) {
-                if(vacancy.getId() == Integer.parseInt(s)){
-                    temp = vacancy;
-                    break;
-                }
-            }
-            if(temp != null){
+        if (user.getState() == CommandEnum.FIND) {
+            temp = vacancies.stream()
+                    .filter(vacancy -> vacancy.getId() == Integer.parseInt(s))
+                    .findAny()
+                    .orElse(null);
+
+            if (temp != null) {
                 user.setVacancy(temp);
                 StringBuilder sb = new StringBuilder();
                 sb.append(temp.getDescription())
@@ -77,14 +77,21 @@ public class OtherCommand extends Command {
                         .append(temp.getEducation());
                 response.setMessage(sb.toString());
                 response.setMarkup(new InlineKeyboardMarkup(Utilities.mapButtonsByTwo(buttons, user.getCurrentLocale())));
-            }else{
+
+                if (temp.getAddress() != null && !temp.getAddress().isEmpty()) {
+                    System.out.println(temp.getAddress());
+                    Coordinates coordinates = new NetworkMapsServiceImpl().geocodeLocation(temp.getAddress());
+                    response.setLocation(coordinates);
+                }
+
+            } else {
                 response.setMessage("Shit happened in show detailed");
             }
         }
         return response;
     }
 
-    private Response getFilterResponse(){
+    private Response getFilterResponse() {
         FilterChecker filterChecker = new FilterChecker();
         Response response = new Response();
 
