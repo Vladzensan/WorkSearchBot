@@ -20,7 +20,7 @@ public class SearchCommand extends Command {
     @Override
     public Response execute() {
         final List<CommandEnum> filterCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.CATALOGUES, CommandEnum.EXPERIENCE,
-                CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.PLACEOFWORK, CommandEnum.FIND));
+                CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.PLACEOFWORK, CommandEnum.FIND, CommandEnum.CLEARFILTERS));
 
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
@@ -31,8 +31,6 @@ public class SearchCommand extends Command {
         response.setMessage(constants.getString("filter_header"));
 
         response.setMarkup(new InlineKeyboardMarkup(Utilities.mapButtonsByTwo(filterCommandEnums, user.getCurrentLocale())));
-
-        //UserFiltersDao.getInstance().clearFilters(user.getChatId());//clear filters to start new search history
 
         return response;
     }
