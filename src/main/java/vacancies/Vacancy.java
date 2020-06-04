@@ -11,9 +11,8 @@ public class Vacancy {
     private Date publicationDate;
     private String town;
 
-    private long longitude;
-    private long latitude;
 
+    private String address;
     private int salaryFrom;
     private int salaryTo;
     private int age;

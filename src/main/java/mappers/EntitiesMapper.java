@@ -1,6 +1,7 @@
 package mappers;
 
 import authorization.AuthToken;
+import network.Coordinates;
 import user.UserInfo;
 import vacancies.Catalogue;
 import vacancies.VacanciesInfo;
@@ -19,4 +20,6 @@ public interface EntitiesMapper {
     List<Catalogue> mapCatalogues(String json) throws IOException;
 
     AuthToken extractToken(String json);
+
+    Coordinates mapCoords(String json);
 }

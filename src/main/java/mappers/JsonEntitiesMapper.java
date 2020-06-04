@@ -3,6 +3,7 @@ package mappers;
 import authorization.AuthToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import network.Coordinates;
 import user.UserInfo;
 import vacancies.Catalogue;
 import vacancies.VacanciesInfo;
@@ -22,6 +23,9 @@ public class JsonEntitiesMapper implements EntitiesMapper {
             Vacancy vacancy = new Vacancy();
             vacancy.setId((int) rawVacancy.get("id"));
             vacancy.setProfession((String) rawVacancy.get("profession"));
+            if(rawVacancy.get("address") !=null) {
+                vacancy.setAddress((String)rawVacancy.get("address"));
+            }
             vacancy.setPublicationDate(new Date((int) rawVacancy.get("date_published") * 1000L));
             LinkedHashMap<String, Object> townInfo = (LinkedHashMap<String, Object>) rawVacancy.get("town");
             vacancy.setTown((String) townInfo.get("title"));
@@ -59,6 +63,11 @@ public class JsonEntitiesMapper implements EntitiesMapper {
         }
 
         return authToken;
+    }
+
+    @Override
+    public Coordinates mapCoords(String json) {
+        return null;
     }
 
 }

@@ -35,6 +35,7 @@ public class WorkBot extends TelegramLongPollingBot {
 
             long chatId = getChatId(update);
 
+
             for (BotApiMethod method : extractMessages(response, chatId)) {
                 try {
                     execute(method);

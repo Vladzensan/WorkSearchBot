@@ -20,7 +20,7 @@ public enum CommandEnum {
     FAVORITES("/favorites", "favorites_item"),
     CATALOGUES("/catalogues", "catalogues_item"),
     SALARYFROM("/salaryfrom", "salary_from_item"),
-    SALARYTO("salaryto", "salary_to_item"),
+    SALARYTO("/salaryto", "salary_to_item"),
     AGE("/age", "age_item"),
     EXPERIENCE("/experience", "experience_item"),
     PLACEOFWORK("/placeofwork", "place_of_work_item"),
