@@ -18,7 +18,7 @@ public class AuthCommand extends Command {
 
     @Override
     public Response execute() {
-        final List<CommandEnum> menuCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.LOGIN, CommandEnum.LOGOUT));
+        final List<CommandEnum> menuCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.LOGIN, CommandEnum.LOGOUT, CommandEnum.BACK_MENU));
 
         response = new Response();
         response.setMessage(CommandEnum.AUTH.getCaption(user.getCurrentLocale()));

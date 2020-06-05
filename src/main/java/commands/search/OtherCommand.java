@@ -19,7 +19,7 @@ import java.util.*;
 
 public class OtherCommand extends Command {
     private final List<CommandEnum> filterCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.PLACEOFWORK, CommandEnum.EXPERIENCE,
-            CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.CATALOGUES, CommandEnum.FIND));
+            CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.CATALOGUES, CommandEnum.FIND, CommandEnum.CLEARFILTERS, CommandEnum.BACK_MENU));
     private Map<CommandEnum, Filter> commandsToFilters;
     private ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
@@ -67,15 +67,8 @@ public class OtherCommand extends Command {
 
             if (temp != null) {
                 user.setVacancy(temp);
-                StringBuilder sb = new StringBuilder();
-                sb.append(temp.getDescription())
-                        .append(temp.getTown())
-                        .append(temp.getProfession())
-                        .append(temp.getPublicationDate())
-                        .append(temp.getId())
-                        .append(temp.getAddress())
-                        .append(temp.getEducation());
-                response.setMessage(sb.toString());
+
+                response.setMessage(temp.getFullInfo(constants));
                 response.setMarkup(new InlineKeyboardMarkup(Utilities.mapButtonsByTwo(buttons, user.getCurrentLocale())));
 
                 if (temp.getAddress() != null && !temp.getAddress().isEmpty()) {

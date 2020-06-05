@@ -190,6 +190,7 @@ public class NetworkServiceImpl implements NetworkService {
 
             con.setRequestProperty("X-Api-App-Id", APP_KEY);
             con.setRequestProperty("Authorization", token);
+            con.setDoOutput(true);
 
             writeData(con.getOutputStream(), "ids[0]=" + vacancyId);
 

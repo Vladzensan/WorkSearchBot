@@ -25,7 +25,7 @@ public class MenuCommand extends Command {
     public Response execute() {
 
         final List<CommandEnum> menuCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.PROFILE, CommandEnum.AUTH,
-                CommandEnum.SEARCH, CommandEnum.FAVORITES, CommandEnum.LANGUAGE));
+                CommandEnum.SEARCH, CommandEnum.LANGUAGE));
         response = new Response();
         response.setMessage("WorkSearch bot menu:");
 

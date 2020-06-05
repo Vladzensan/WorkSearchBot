@@ -20,7 +20,7 @@ public class SearchCommand extends Command {
     @Override
     public Response execute() {
         final List<CommandEnum> filterCommandEnums = new ArrayList<>(Arrays.asList(CommandEnum.CATALOGUES, CommandEnum.EXPERIENCE,
-                CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.PLACEOFWORK, CommandEnum.FIND, CommandEnum.CLEARFILTERS));
+                CommandEnum.SALARYFROM, CommandEnum.SALARYTO, CommandEnum.AGE, CommandEnum.PLACEOFWORK, CommandEnum.FIND, CommandEnum.CLEARFILTERS, CommandEnum.BACK_MENU));
 
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 

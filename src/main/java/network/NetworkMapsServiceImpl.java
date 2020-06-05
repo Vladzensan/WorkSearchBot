@@ -19,7 +19,6 @@ public class NetworkMapsServiceImpl implements NetworkMapsService {
     public Coordinates geocodeLocation(String address) {
         URL url;
         try {
-//            Transliterator toLatinTrans = Transliterator.getInstance("Cyrillic-Latin");
             url = new URL(GEOCODE_PATH + "?apikey=" + MAPS_API_KEY + "&geocode=" + URLEncoder.encode(address, HTTP.UTF_8) + "&format=json&results=1");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");

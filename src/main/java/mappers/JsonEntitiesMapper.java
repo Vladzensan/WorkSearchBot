@@ -23,6 +23,16 @@ public class JsonEntitiesMapper implements EntitiesMapper {
             Vacancy vacancy = new Vacancy();
             vacancy.setId((int) rawVacancy.get("id"));
             vacancy.setProfession((String) rawVacancy.get("profession"));
+            Map<String, Object> objectMap = (Map<String, Object>) rawVacancy.get("place_of_work");
+            vacancy.setPlaceOfWork((Integer) objectMap.get("id"));
+            objectMap = (Map<String, Object>) rawVacancy.get("type_of_work");
+            vacancy.setTypeOfWork((Integer) objectMap.get("id"));
+            vacancy.setContactName((String) rawVacancy.get("contact"));
+            vacancy.setEmail((String) rawVacancy.get("email"));
+            vacancy.setPhone((String) rawVacancy.get("phone"));
+            vacancy.setSalaryFrom((Integer) rawVacancy.get("payment_from"));
+            vacancy.setCompanyName((String) rawVacancy.get("firm_name"));
+            vacancy.setSalaryTo((Integer) rawVacancy.get("payment_to"));
             if (rawVacancy.get("address") != null) {
                 vacancy.setAddress((String) rawVacancy.get("address"));
             }

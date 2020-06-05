@@ -5,6 +5,7 @@ import network.NetworkServiceImpl;
 import responses.Response;
 import user.User;
 
+import javax.ws.rs.NotAuthorizedException;
 import java.util.ResourceBundle;
 
 public class AddFavouritesCommand extends Command {
@@ -17,10 +18,15 @@ public class AddFavouritesCommand extends Command {
         ResourceBundle constants = localeService.getMessageBundle(user.getCurrentLocale());
 
         NetworkServiceImpl networkService = new NetworkServiceImpl();
-
-        networkService.addFavoriteVacancy(user.getChatId(), user.getVacancy().getId());
-
         response = new Response();
+
+        try {
+            networkService.addFavoriteVacancy(user.getChatId(), user.getVacancy().getId());
+        } catch (NotAuthorizedException e) {
+            response.setMessage(constants.getString("login_require_msg"));
+
+            return response;
+        }
 
         response.setMessage(constants.getString("add_favorites_complete"));
 
